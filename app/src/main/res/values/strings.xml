@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MoveMedical Schedule App</string>
+    <string name="appt_location_san_diego">San Diego</string>
+    <string name="appt_location_st_george">St. George</string>
+    <string name="appt_location_park_city">Park City</string>
+    <string name="appt_location_dallas">Dallas</string>
+    <string name="appt_location_memphis">Memphis</string>
+    <string name="appt_location_orlando">Orlando</string>
+    <string name="appt_location_unknown">Unknown Location</string>
 </resources>

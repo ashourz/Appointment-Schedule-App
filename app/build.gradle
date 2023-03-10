@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
     id 'kotlin-kapt'
 }
 
@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.movemedicalscheduleapp"
-        minSdk 21
+        minSdk 26
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -19,6 +19,16 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.schemaLocation":"$projectDir/schemas".toString(),
+                        "room.incremental":"true"
+                ]
+            }
+        }
+
     }
 
     buildTypes {
@@ -51,16 +61,20 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.0'
+    testImplementation 'junit:junit:4.12'
 
     //region: Jetpack Room
     def room_version = "2.5.0"
     implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
+    annotationProcessor "androidx.room:room-compiler:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
     //Jetpack Room - Kotlin Extensions and Coroutines support
     implementation("androidx.room:room-ktx:$room_version")
     // Jetpack Room - Test helpers
     testImplementation("androidx.room:room-testing:$room_version")
+//    implementation 'android.arch.persistence.room:runtime:1.1.1'
+//    annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
     //endregion
 
     //region: Jetpack Compose Navigation
@@ -85,6 +99,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0'
     // Jetpack Compose - Integration with LiveData
     implementation 'androidx.compose.runtime:runtime-livedata'
+
     //endregion
 
     //region: Testing
@@ -92,6 +107,10 @@ dependencies {
     testImplementation "com.google.truth:truth:1.1.2"
     androidTestImplementation "com.google.truth:truth:1.1.2"
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    //Mockito
+//    testImplementation 'org.mockito:mockito-core:3.10.0'
+//    androidTestImplementation 'org.mockito:mockito-android:3.10.0'
+
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
     //endregion
