@@ -22,7 +22,10 @@ fun MainActivityNavHost(
     ){
 
         composable(NavDestinationEnum.SCHEDULE.destination) {
-
+            ScheduleScaffold(
+                dataViewModel = dataViewModel,
+                onAddNewAppointment = {}
+            )
         }
 
         composable(NavDestinationEnum.ADD_APPOINTMENT.destination) {

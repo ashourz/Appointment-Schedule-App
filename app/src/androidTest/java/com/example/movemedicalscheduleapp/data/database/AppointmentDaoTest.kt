@@ -52,6 +52,7 @@ class AppointmentDaoTest: TestCase() {
             typeConverter.localDateTimeToLong(LocalDateTime.now())
         )!!
         val appt = Appointment(
+            title = "Test Title",
             datetime = sanitizedDateTime,
             location = ApptLocation.DALLAS,
             duration = Duration.ofMinutes(45L),
@@ -72,6 +73,7 @@ class AppointmentDaoTest: TestCase() {
             typeConverter.localDateTimeToLong(LocalDateTime.now())
         )!!
         val initialAppt = Appointment(
+            title = "Test Title",
             datetime = sanitizedDateTime,
             location = ApptLocation.DALLAS,
             duration = Duration.ofMinutes(45L),
@@ -98,6 +100,7 @@ class AppointmentDaoTest: TestCase() {
             typeConverter.localDateTimeToLong(LocalDateTime.now())
         )!!
         val appt = Appointment(
+            title = "Test Title",
             datetime = sanitizedDateTime,
             location = ApptLocation.DALLAS,
             duration = Duration.ofMinutes(45L),
@@ -127,6 +130,7 @@ class AppointmentDaoTest: TestCase() {
             typeConverter.localDateTimeToLong(LocalDateTime.now())
         )!!
         val appt = Appointment(
+            title = "Test Title",
             datetime = sanitizedDateTime,
             location = ApptLocation.DALLAS,
             duration = Duration.ofMinutes(45L),
@@ -144,6 +148,7 @@ class AppointmentDaoTest: TestCase() {
             typeConverter.localDateTimeToLong(LocalDateTime.now())
         )!!
         val appt1 = Appointment(
+            title = "Test Title 1",
             datetime = sanitizedDateTime,
             location = ApptLocation.DALLAS,
             duration = Duration.ofMinutes(45L),
@@ -155,6 +160,7 @@ class AppointmentDaoTest: TestCase() {
             rowid = resultId1
         )
         val appt2 = Appointment(
+            title = "Test Title 2",
             datetime = sanitizedDateTime,
             location = ApptLocation.ORLANDO,
             duration = Duration.ofMinutes(15L),
@@ -177,6 +183,7 @@ class AppointmentDaoTest: TestCase() {
             typeConverter.localDateTimeToLong(LocalDateTime.now())
         )!!
         val appt = Appointment(
+            title = "Test Title",
             datetime = sanitizedDateTime,
             location = ApptLocation.DALLAS,
             duration = Duration.ofMinutes(45L),
@@ -197,6 +204,7 @@ class AppointmentDaoTest: TestCase() {
             typeConverter.localDateTimeToLong(LocalDateTime.now().plusDays(1L))
         )!!
         val appt = Appointment(
+            title = "Test Title",
             datetime = sanitizedDateTime,
             location = ApptLocation.DALLAS,
             duration = Duration.ofMinutes(45L),
@@ -219,6 +227,7 @@ class AppointmentDaoTest: TestCase() {
             typeConverter.localDateTimeToLong(LocalDateTime.now().plusDays(1L))
         )!!
         val appt = Appointment(
+            title = "Test Title",
             datetime = sanitizedDateTime,
             location = ApptLocation.DALLAS,
             duration = Duration.ofMinutes(45L),
@@ -241,6 +250,7 @@ class AppointmentDaoTest: TestCase() {
             typeConverter.localDateTimeToLong(LocalDateTime.now())
         )!!
         val appt = Appointment(
+            title = "Test Title",
             datetime = sanitizedDateTime,
             location = ApptLocation.DALLAS,
             duration = Duration.ofMinutes(45L),
@@ -263,6 +273,7 @@ class AppointmentDaoTest: TestCase() {
             typeConverter.localDateTimeToLong(LocalDateTime.now().minusDays(1L))
         )!!
         val appt = Appointment(
+            title = "Test Title",
             datetime = sanitizedDateTime,
             location = ApptLocation.DALLAS,
             duration = Duration.ofMinutes(45L),
@@ -285,6 +296,7 @@ class AppointmentDaoTest: TestCase() {
             typeConverter.localDateTimeToLong(LocalDateTime.now())
         )!!
         val appt = Appointment(
+            title = "Test Title",
             datetime = sanitizedDateTime,
             location = ApptLocation.DALLAS,
             duration = Duration.ofMinutes(45L),

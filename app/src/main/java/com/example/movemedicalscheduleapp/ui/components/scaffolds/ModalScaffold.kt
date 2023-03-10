@@ -25,9 +25,9 @@ fun ModalScaffold(
         topBar = { BasicTopBar(title) },
         bottomBar = {
             ModalBottomBar(
-                actionText = actionButtonText,
-                onCancelButtonClick = { onCancelButtonClick() },
-                onAddButtonClick = {
+                positiveActionText = actionButtonText,
+                onNegativeButtonClick = { onCancelButtonClick() },
+                onPositiveButtonClick = {
                     if(validation()) {
                         onActionButtonClick()
                     }}

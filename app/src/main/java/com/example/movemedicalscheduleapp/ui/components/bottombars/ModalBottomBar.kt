@@ -13,12 +13,13 @@ import com.example.movemedicalscheduleapp.ui.ComposableConstants
 
 @Composable
 fun ModalBottomBar(
-    actionText: String,
-    onCancelButtonClick: () -> Unit,
-    onAddButtonClick: () -> Unit
+    positiveActionText: String,
+    negativeActionText: String = "Cancel",
+    onNegativeButtonClick: () -> Unit,
+    onPositiveButtonClick: () -> Unit,
 ) {
     //Perform Cancel operation on back gesture
-    BackHandler{ onCancelButtonClick() }
+    BackHandler{ onNegativeButtonClick() }
 
     BottomAppBar(
         modifier = Modifier.height(ComposableConstants.defaultNavigationBarHeight)
@@ -29,9 +30,9 @@ fun ModalBottomBar(
         ){
             TextButton(
                 elevation = ButtonDefaults.elevatedButtonElevation(),
-                onClick = { onCancelButtonClick() }) {
+                onClick = { onNegativeButtonClick() }) {
                 Text(
-                    text = "Cancel",
+                    text = negativeActionText,
                     maxLines = 1,
                     softWrap = false,
                     fontWeight = FontWeight.Bold,
@@ -41,9 +42,9 @@ fun ModalBottomBar(
             }
             TextButton(
                 elevation = ButtonDefaults.elevatedButtonElevation(),
-                onClick = { onAddButtonClick() }) {
+                onClick = { onPositiveButtonClick() }) {
                 Text(
-                    text = actionText,
+                    text = positiveActionText,
                     maxLines = 1,
                     softWrap = false,
                     fontWeight = FontWeight.Bold,
