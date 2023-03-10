@@ -7,6 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.movemedicalscheduleapp.ui.components.bottombars.ModalBottomBar
 import com.example.movemedicalscheduleapp.ui.components.toolbars.BasicTopBar
 
@@ -34,7 +35,7 @@ fun ModalScaffold(
             )
         },
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
+        Column(modifier = Modifier.padding(innerPadding).padding(horizontal = 8.dp)) {
             content(this)
         }
     }

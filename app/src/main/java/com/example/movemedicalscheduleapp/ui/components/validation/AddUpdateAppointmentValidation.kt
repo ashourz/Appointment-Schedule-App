@@ -6,16 +6,13 @@ import java.time.Duration
 
 fun addUpdateAppointmentValidation(
     tempAppointmentProperties: TempAppointmentProperties,
-    appointmentTitleError: String?,
     updateAppointmentTitleError: (String?) -> Unit,
-    appointmentDurationError: String?,
     updateAppointmentDurationError: (String?) -> Unit,
-    appointmentLocationError: String?,
     updateAppointmentLocationError: (String?) -> Unit,
-    updateError: String?,
     updateUpdateError: (String?) -> Unit
 
 ): Boolean {
+    var validationBoolean = true
     //region: Reset Error States
     updateAppointmentTitleError(null)
     updateAppointmentDurationError(null)
@@ -24,12 +21,15 @@ fun addUpdateAppointmentValidation(
     //endregion
     if(tempAppointmentProperties.appointmentTitle.isNullOrBlank()){
         updateAppointmentTitleError("Appointment Title Cannot Be Blank")
+       validationBoolean = false
     }
     if (tempAppointmentProperties.duration == Duration.ZERO) {
         updateAppointmentDurationError("Appointment Duration Must Be Greater Than 0 Minutes")
+        validationBoolean = false
     }
     if (tempAppointmentProperties.appointmentLocation == ApptLocation.UNKNOWN) {
         updateAppointmentLocationError("Appointment Location Cannot Be Blank")
+        validationBoolean = false
     }
     if (tempAppointmentProperties.editingAppointment != null &&
         tempAppointmentProperties.appointmentTitle ==        tempAppointmentProperties.editingAppointment.title &&
@@ -40,11 +40,8 @@ fun addUpdateAppointmentValidation(
         tempAppointmentProperties.description ==            tempAppointmentProperties.editingAppointment.description
     ) {
         updateUpdateError("No Changes Have Been Made")
+        validationBoolean = false
     }
     //Validate For No Errors
-    return (
-        appointmentTitleError == null &&
-        appointmentDurationError == null &&
-        appointmentLocationError == null &&
-        updateError == null)
+    return validationBoolean
 }

@@ -1,6 +1,7 @@
 package com.example.movemedicalscheduleapp.view_model
 
 import android.app.Application
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movemedicalscheduleapp.data.entity.Appointment
@@ -28,7 +29,13 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
         _temporaryAppointmentPropertiesFlow.value = updatedAppointmentProperties
     }
     //endregion
-
+    //region: Schedule Scaffold States
+    private var _deleteAppointment: MutableStateFlow<Appointment?> = MutableStateFlow(null)
+    val deleteAppointment: StateFlow<Appointment?> = _deleteAppointment.asStateFlow()
+    fun updateDeleteAppointment(appointment: Appointment?){
+        _deleteAppointment.value = appointment
+    }
+    //endregion
     /**
      * Returns rowId on new insertion
      * Returns -1 on update

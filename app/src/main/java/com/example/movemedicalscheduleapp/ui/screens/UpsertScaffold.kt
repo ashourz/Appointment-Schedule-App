@@ -3,6 +3,7 @@ package com.example.movemedicalscheduleapp.ui.screens
 import androidx.activity.compose.BackHandler
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -44,7 +45,7 @@ fun UpsertScaffold(
     //endregion
 
     DisposableEffect(key1 = Unit) {
-        if(!update){
+        if (!update) {
             //Refresh temp properties if this is an add operation
             dataViewModel.updateTempAppointmentProperties(TempAppointmentProperties())
         }
@@ -58,24 +59,28 @@ fun UpsertScaffold(
     }
 
     ModalScaffold(
-        title = if(update){"Update Appointment"}else{"Add Appointment"},
-        actionButtonText = if(update){"Update"}else{"Add"},
+        title = if (update) {
+            "Update Appointment"
+        } else {
+            "Add Appointment"
+        },
+        actionButtonText = if (update) {
+            "Update"
+        } else {
+            "Add"
+        },
         validation = {
             addUpdateAppointmentValidation(
                 tempAppointmentProperties = tempAppointmentProperties,
-                appointmentTitleError = appointmentTitleError,
                 updateAppointmentTitleError = { updatedTitleError ->
                     appointmentTitleError = updatedTitleError
                 },
-                appointmentDurationError = appointmentDurationError,
                 updateAppointmentDurationError = { updatedDurationError ->
                     appointmentDurationError = updatedDurationError
                 },
-                appointmentLocationError = appointmentLocationError,
                 updateAppointmentLocationError = { updatedLocationError ->
                     appointmentLocationError = updatedLocationError
                 },
-                updateError = updateError,
                 updateUpdateError = { updatedUpdateError ->
                     updateError = updatedUpdateError
                 }
@@ -85,7 +90,8 @@ fun UpsertScaffold(
             coroutineScopeIO.launch {
                 dataViewModel.upsertAppointment(
                     Appointment(
-                        title = tempAppointmentProperties.appointmentTitle?:"",
+                        rowid = tempAppointmentProperties.editingAppointment?.rowid ?: 0,
+                        title = tempAppointmentProperties.appointmentTitle ?: "",
                         datetime = tempAppointmentProperties.appointmentDate.atTime(tempAppointmentProperties.appointmentTime),
                         location = tempAppointmentProperties.appointmentLocation,
                         duration = tempAppointmentProperties.duration,
@@ -98,15 +104,14 @@ fun UpsertScaffold(
         onCancelButtonClick = {
             onNavigateAway()
         }
-    ){
-        if(updateError != null){
+    ) {
+        if (updateError != null) {
             ErrorText(errorText = updateError)
         }
-        if(tempAppointmentProperties.existingApptError != null){
+        if (tempAppointmentProperties.existingApptError != null) {
             ErrorText(errorText = tempAppointmentProperties.existingApptError)
         }
         LazyColumn(
-            modifier = Modifier.padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item(
@@ -187,8 +192,11 @@ fun UpsertScaffold(
                 LocationDropDown(
                     modifier = Modifier.fillMaxWidth(),
                     label = "Appointment Location",
-                    selectedLocation = if(tempAppointmentProperties.appointmentLocation == ApptLocation.UNKNOWN){null }
-                    else{tempAppointmentProperties.appointmentLocation},
+                    selectedLocation = if (tempAppointmentProperties.appointmentLocation == ApptLocation.UNKNOWN) {
+                        null
+                    } else {
+                        tempAppointmentProperties.appointmentLocation
+                    },
                     onLocationSelected = { updatedApptLocation ->
                         dataViewModel.updateTempAppointmentProperties(
                             tempAppointmentProperties.copy(

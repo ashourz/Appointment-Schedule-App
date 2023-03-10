@@ -22,7 +22,7 @@ fun ModalBottomBar(
     BackHandler{ onNegativeButtonClick() }
 
     BottomAppBar(
-        modifier = Modifier.height(ComposableConstants.defaultNavigationBarHeight)
+//        modifier = Modifier.height(ComposableConstants.defaultNavigationBarHeight)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -36,7 +36,7 @@ fun ModalBottomBar(
                     maxLines = 1,
                     softWrap = false,
                     fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.titleLarge,
 
                 )
             }
@@ -48,8 +48,8 @@ fun ModalBottomBar(
                     maxLines = 1,
                     softWrap = false,
                     fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                    style = MaterialTheme.typography.titleLarge,
+                    )
             }
         }
     }

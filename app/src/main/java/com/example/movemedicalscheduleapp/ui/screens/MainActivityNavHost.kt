@@ -18,13 +18,22 @@ fun MainActivityNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = NavDestinationEnum.ADD_APPOINTMENT.destination
+        startDestination = NavDestinationEnum.SCHEDULE.destination
     ){
 
         composable(NavDestinationEnum.SCHEDULE.destination) {
             ScheduleScaffold(
                 dataViewModel = dataViewModel,
-                onAddNewAppointment = {}
+                onNavigateToAddAppointment = {
+                    navController.navigate(NavDestinationEnum.ADD_APPOINTMENT.destination) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToUpdateAppointment = {
+                    navController.navigate(NavDestinationEnum.EDIT_APPOINTMENT.destination) {
+                        launchSingleTop = true
+                    }
+                }
             )
         }
 
@@ -33,23 +42,23 @@ fun MainActivityNavHost(
                 activity = activity ,
                 dataViewModel = dataViewModel,
                 update = false,
-                onNavigateAway = {}
+                onNavigateAway = {
+                    navController.navigateUp()
+                }
             )
         }
 
         composable(
-            "${NavDestinationEnum.EDIT_APPOINTMENT.destination}/{appointmentId}",
-            arguments = listOf(navArgument("appointmentId") { type = NavType.LongType })
-        ) {backStackEntry ->
-            val appointmentId = backStackEntry.arguments?.getLong("appointmentId")
+            NavDestinationEnum.EDIT_APPOINTMENT.destination
+        ) {
             UpsertScaffold(
                 activity = activity ,
                 dataViewModel = dataViewModel,
                 update = true,
-                onNavigateAway = {}
+                onNavigateAway = {
+                    navController.navigateUp()
+                }
             )
         }
-
     }
-    
 }

@@ -9,7 +9,7 @@ fun ErrorText(errorText: String?) {
     errorText?.let { nnErrorText ->
         Text(
             text = nnErrorText,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.error
         )
     }

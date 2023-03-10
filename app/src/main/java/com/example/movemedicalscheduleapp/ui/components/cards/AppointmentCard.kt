@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,7 +32,7 @@ fun AppointmentCard(
     var expanded by remember { mutableStateOf(false) }
     val localContext = LocalContext.current
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ElevatedCard(
@@ -39,6 +40,7 @@ fun AppointmentCard(
                 .fillMaxWidth()
                 .clickable(
                     enabled = true,
+                    role = Role.Button,
                     onClick = { expanded = !expanded }
                 ),
 //            shape = MaterialTheme.shapes.medium,
@@ -62,7 +64,7 @@ fun AppointmentCard(
             }
         }
         this.AnimatedVisibility(visible = expanded, enter = expandVertically(), exit = shrinkVertically()) {
-            OutlinedCard(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp),
@@ -97,7 +99,7 @@ fun AppointmentCard(
                             elevation = ButtonDefaults.elevatedButtonElevation(),
                             onClick = { onEditAppointment(appointment) }) {
                             Text(
-                                text = "Edit",
+                                text = "Update",
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.labelMedium,
                             )
