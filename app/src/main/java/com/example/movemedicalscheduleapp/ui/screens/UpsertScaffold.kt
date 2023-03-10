@@ -1,0 +1,221 @@
+package com.example.movemedicalscheduleapp.ui.screens
+
+import androidx.activity.compose.BackHandler
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.movemedicalscheduleapp.data.entity.Appointment
+import com.example.movemedicalscheduleapp.data.entity.ApptLocation
+import com.example.movemedicalscheduleapp.ui.ComposableConstants
+import com.example.movemedicalscheduleapp.ui.components.datetime.ComposeDatePicker
+import com.example.movemedicalscheduleapp.ui.components.datetime.ComposeDurationPicker
+import com.example.movemedicalscheduleapp.ui.components.datetime.ComposeTimePicker
+import com.example.movemedicalscheduleapp.ui.components.scaffolds.ModalScaffold
+import com.example.movemedicalscheduleapp.ui.components.text.EditableTextField
+import com.example.movemedicalscheduleapp.ui.components.text.ErrorText
+import com.example.movemedicalscheduleapp.ui.components.text.LocationDropDown
+import com.example.movemedicalscheduleapp.ui.components.validation.addUpdateAppointmentValidation
+import com.example.movemedicalscheduleapp.ui.ui_data_class.TempAppointmentProperties
+import com.example.movemedicalscheduleapp.view_model.DataViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
+
+@Composable
+fun UpsertScaffold(
+    activity: AppCompatActivity,
+    dataViewModel: DataViewModel,
+    update: Boolean,
+    onNavigateAway: () -> Unit
+    ) {
+    val coroutineScopeIO = rememberCoroutineScope().plus(Dispatchers.IO)
+    val tempAppointmentProperties by dataViewModel.temporaryAppointmentPropertiesFlow.collectAsState()
+    //region: Error States
+    var appointmentTitleError: String? by remember { mutableStateOf(null) }
+    var appointmentLocationError: String? by remember { mutableStateOf(null) }
+    var appointmentDurationError: String? by remember { mutableStateOf(null) }
+    var updateError: String? by remember { mutableStateOf(null) }
+
+    //endregion
+
+    DisposableEffect(key1 = Unit) {
+        if(!update){
+            //Refresh temp properties if this is an add operation
+            dataViewModel.updateTempAppointmentProperties(TempAppointmentProperties())
+        }
+        onDispose {
+            dataViewModel.updateTempAppointmentProperties(TempAppointmentProperties())
+        }
+    }
+
+    BackHandler() {
+        onNavigateAway()
+    }
+
+    ModalScaffold(
+        title = if(update){"Update Appointment"}else{"Add Appointment"},
+        actionButtonText = if(update){"Update"}else{"Add"},
+        validation = {
+            addUpdateAppointmentValidation(
+                tempAppointmentProperties = tempAppointmentProperties,
+                appointmentTitleError = appointmentTitleError,
+                updateAppointmentTitleError = { updatedTitleError ->
+                    appointmentTitleError = updatedTitleError
+                },
+                appointmentDurationError = appointmentDurationError,
+                updateAppointmentDurationError = { updatedDurationError ->
+                    appointmentDurationError = updatedDurationError
+                },
+                appointmentLocationError = appointmentLocationError,
+                updateAppointmentLocationError = { updatedLocationError ->
+                    appointmentLocationError = updatedLocationError
+                },
+                updateError = updateError,
+                updateUpdateError = { updatedUpdateError ->
+                    updateError = updatedUpdateError
+                }
+            )
+        },
+        onActionButtonClick = {
+            coroutineScopeIO.launch {
+                dataViewModel.upsertAppointment(
+                    Appointment(
+                        title = tempAppointmentProperties.appointmentTitle?:"",
+                        datetime = tempAppointmentProperties.appointmentDate.atTime(tempAppointmentProperties.appointmentTime),
+                        location = tempAppointmentProperties.appointmentLocation,
+                        duration = tempAppointmentProperties.duration,
+                        description = tempAppointmentProperties.description ?: ""
+                    )
+                )
+            }
+            onNavigateAway()
+        },
+        onCancelButtonClick = {
+            onNavigateAway()
+        }
+    ){
+        if(updateError != null){
+            ErrorText(errorText = updateError)
+        }
+        if(tempAppointmentProperties.existingApptError != null){
+            ErrorText(errorText = tempAppointmentProperties.existingApptError)
+        }
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item(
+                contentType = "EditableTextField"
+            ) {
+                EditableTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    textValue = tempAppointmentProperties.appointmentTitle,
+                    label = "Appointment Title",
+                    placeholder = "Enter Appointment Title",
+                    leadingIconDrawable = ComposableConstants.nameIcon,
+                    leadingIconContentDescription = "Appointment Title",
+                    onValueChange = { updatedName ->
+                        dataViewModel.updateTempAppointmentProperties(
+                            tempAppointmentProperties.copy(
+                                appointmentTitle = updatedName
+                            )
+                        )
+                    },
+                    errorString = appointmentTitleError
+                )
+            }
+            item(
+                contentType = "ComposeDatePicker"
+            ) {
+                ComposeDatePicker(
+                    activity = activity,
+                    label = "Appointment Date",
+                    placeholder = "Select Appointment Date",
+                    leadingIconDrawable = ComposableConstants.calendarIcon,
+                    leadingIconContentDescription = "Appointment Date",
+                    selectedDate = tempAppointmentProperties.appointmentDate,
+                    onDateSelected = { updatedDate ->
+                        dataViewModel.updateTempAppointmentProperties(
+                            tempAppointmentProperties.copy(appointmentDate = updatedDate)
+                        )
+                    }
+                )
+            }
+            item(
+                contentType = "ComposeTimePicker"
+            ) {
+                ComposeTimePicker(
+                    activity = activity,
+                    label = "Appointment Time",
+                    placeholder = "Select Appointment Time",
+                    leadingIconDrawable = ComposableConstants.timeIcon,
+                    leadingIconContentDescription = "Appointment Date",
+                    selectedTime = tempAppointmentProperties.appointmentTime,
+                    onTimeSelected = { updatedTime ->
+                        dataViewModel.updateTempAppointmentProperties(
+                            tempAppointmentProperties.copy(appointmentTime = updatedTime)
+                        )
+                    }
+                )
+            }
+            item(
+                contentType = "ComposeDurationPicker"
+            ) {
+                ComposeDurationPicker(
+                    activity = activity,
+                    label = "Appointment Duration",
+                    placeholder = "Select Appointment Duration",
+                    leadingIconDrawable = ComposableConstants.durationIcon,
+                    leadingIconContentDescription = "Appointment Date",
+                    selectedDuration = tempAppointmentProperties.duration,
+                    onDurationSelected = { updatedDuration ->
+                        dataViewModel.updateTempAppointmentProperties(
+                            tempAppointmentProperties.copy(duration = updatedDuration)
+                        )
+                    },
+                    errorString = appointmentDurationError
+                )
+            }
+            item(
+                contentType = "LocationDropDown"
+            ) {
+                LocationDropDown(
+                    modifier = Modifier.fillMaxWidth(),
+                    label = "Appointment Location",
+                    selectedLocation = if(tempAppointmentProperties.appointmentLocation == ApptLocation.UNKNOWN){null }
+                    else{tempAppointmentProperties.appointmentLocation},
+                    onLocationSelected = { updatedApptLocation ->
+                        dataViewModel.updateTempAppointmentProperties(
+                            tempAppointmentProperties.copy(
+                                appointmentLocation = updatedApptLocation
+                            )
+                        )
+                    },
+                    errorString = appointmentLocationError
+                )
+            }
+            item {
+                EditableTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    textValue = tempAppointmentProperties.description,
+                    label = "Description",
+                    placeholder = "Enter Description",
+                    leadingIconDrawable = ComposableConstants.descriptionIcon,
+                    leadingIconContentDescription = "Description",
+                    onValueChange = { updatedDesc ->
+                        dataViewModel.updateTempAppointmentProperties(
+                            tempAppointmentProperties.copy(
+                                description = updatedDesc
+                            )
+                        )
+                    }
+                )
+            }
+        }
+    }
+}

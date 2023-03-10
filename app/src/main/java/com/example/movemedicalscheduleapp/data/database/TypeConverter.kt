@@ -1,7 +1,7 @@
 package com.example.movemedicalscheduleapp.data.database
 
 import androidx.room.TypeConverter
-import com.example.movemedicalscheduleapp.enums.ApptLocation
+import com.example.movemedicalscheduleapp.data.entity.ApptLocation
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneOffset

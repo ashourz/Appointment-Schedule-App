@@ -6,7 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.movemedicalscheduleapp.data.database.TypeConverter
 import com.example.movemedicalscheduleapp.data.entity.Appointment
-import com.example.movemedicalscheduleapp.enums.ApptLocation
+import com.example.movemedicalscheduleapp.data.entity.ApptLocation
 import com.google.common.truth.Truth
 import junit.framework.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi

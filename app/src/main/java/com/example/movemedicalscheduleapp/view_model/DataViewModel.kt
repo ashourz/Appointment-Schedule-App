@@ -4,8 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movemedicalscheduleapp.data.entity.Appointment
+import com.example.movemedicalscheduleapp.ui.ui_data_class.TempAppointmentProperties
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class DataViewModel(application: Application) : AndroidViewModel(application) {
     private val dataViewModelScope = viewModelScope.plus(CoroutineName("viewModelCoroutine") + SupervisorJob() + Dispatchers.IO)
@@ -15,6 +19,14 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
     val pastAppointmentStateFlow: Flow<List<Appointment>> = appointmentRepo.pastAppointmentFlow
     val todayAppointmentStateFlow: Flow<List<Appointment>> = appointmentRepo.todayAppointmentFlow
     val futureAppointmentStateFlow: Flow<List<Appointment>> = appointmentRepo.futureAppointmentFlow
+    //endregion
+
+    //region: Temporary Appointment Properties
+    private var _temporaryAppointmentPropertiesFlow :MutableStateFlow<TempAppointmentProperties> = MutableStateFlow(TempAppointmentProperties())
+    val temporaryAppointmentPropertiesFlow : StateFlow<TempAppointmentProperties> = _temporaryAppointmentPropertiesFlow.asStateFlow()
+    fun updateTempAppointmentProperties(updatedAppointmentProperties: TempAppointmentProperties){
+        _temporaryAppointmentPropertiesFlow.value = updatedAppointmentProperties
+    }
     //endregion
 
     /**

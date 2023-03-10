@@ -1,4 +1,4 @@
-package com.example.movemedicalscheduleapp.enums
+package com.example.movemedicalscheduleapp.data.entity
 
 import android.content.Context
 import com.example.movemedicalscheduleapp.R
@@ -39,7 +39,7 @@ enum class ApptLocation(
         fun getLocationByZipCode(zipCode: Int): ApptLocation {
             return ApptLocation.values().firstOrNull {
                 it.zipCode == zipCode
-            }?:UNKNOWN
+            }?: UNKNOWN
         }
     }
 
