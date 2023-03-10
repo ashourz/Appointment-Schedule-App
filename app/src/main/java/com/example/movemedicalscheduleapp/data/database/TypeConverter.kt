@@ -30,12 +30,12 @@ class TypeConverter {
 
     @TypeConverter
     fun durationToLong(duration: Duration?): Long? {
-        return duration?.let{it.toMillis()}
+        return duration?.let{it.seconds}
     }
 
     @TypeConverter
     fun longToDuration(long: Long?): Duration? {
-        return long?.let{Duration.ofMillis(long)}
+        return long?.let{Duration.ofSeconds(long)}
     }
 
 

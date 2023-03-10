@@ -5,12 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movemedicalscheduleapp.data.entity.Appointment
+import com.example.movemedicalscheduleapp.extensions.toSQLLong
 import com.example.movemedicalscheduleapp.ui.ui_data_class.TempAppointmentProperties
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.withLock
 
 class DataViewModel(application: Application) : AndroidViewModel(application) {
     private val dataViewModelScope = viewModelScope.plus(CoroutineName("viewModelCoroutine") + SupervisorJob() + Dispatchers.IO)
@@ -52,6 +54,12 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
     suspend fun deleteAppointment(appointment: Appointment): Int{
         return withContext(dataViewModelScope.coroutineContext) {
             appointmentRepo.deleteAppointment(appointment)
+        }
+    }
+
+    suspend fun getOverlappingAppointments(appointment: Appointment): List<Appointment> {
+        return withContext(dataViewModelScope.coroutineContext) {
+            appointmentRepo.getOverlappingAppointments(appointment)
         }
     }
 }

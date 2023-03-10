@@ -5,6 +5,7 @@ import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.extensions.getTodaySQLLong
 import com.example.movemedicalscheduleapp.extensions.getTomorrowSQLLong
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
 
 @Dao
 interface AppointmentDao {
@@ -34,7 +35,15 @@ interface AppointmentDao {
     @Query("""SELECT * FROM appointment_table WHERE datetime >= :tomorrowSQLiteLong """)
     fun getAllFutureAppointments(tomorrowSQLiteLong: Long = getTomorrowSQLLong()): Flow<List<Appointment>>
 
-//    @Transaction
-//    @Query("SELECT * FROM appointment_table")
-//    fun getAllAppointments(): List<Appointment>
+    /**
+     * Find Overlapping Appointments
+     * */
+    @Transaction
+    @Query("""SELECT * FROM appointment_table WHERE 
+            location = :locationInt AND
+            ((datetime <= :apptStartSQLLong AND (datetime + duration) >= :apptStartSQLLong) OR
+            (datetime >= :apptStartSQLLong AND (datetime + duration) <= :apptEndSQLLong) OR
+            (datetime <= :apptEndSQLLong AND (datetime + duration) >= :apptEndSQLLong) OR
+            (datetime <= :apptStartSQLLong AND (datetime + duration) >= :apptEndSQLLong))""")
+    fun getOverlappingAppointments(locationInt: Int, apptStartSQLLong: Long, apptEndSQLLong: Long): List<Appointment>
 }

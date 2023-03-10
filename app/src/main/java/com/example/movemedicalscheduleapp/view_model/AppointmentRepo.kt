@@ -5,6 +5,7 @@ import com.example.movemedicalscheduleapp.data.dao.AppointmentDao
 import com.example.movemedicalscheduleapp.data.database.DatabaseMutex
 import com.example.movemedicalscheduleapp.data.database.ScheduleDatabase
 import com.example.movemedicalscheduleapp.data.entity.Appointment
+import com.example.movemedicalscheduleapp.extensions.toSQLLong
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.sync.withLock
 
@@ -40,7 +41,16 @@ class AppointmentRepo(context: Context) : DatabaseMutex {
         }
     }
 
-
-
-
+    /**
+     * Returns list of overlapping
+     * */
+    suspend fun getOverlappingAppointments(appointment: Appointment): List<Appointment> {
+        databaseWriteMutex().withLock {
+            return appointmentDao.getOverlappingAppointments(
+                locationInt = appointment.location.zipCode,
+                apptStartSQLLong = appointment.datetime.toSQLLong(),
+                apptEndSQLLong = appointment.datetime.plus(appointment.duration).toSQLLong()
+            )
+        }
+    }
 }
