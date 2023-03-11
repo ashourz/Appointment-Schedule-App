@@ -1,6 +1,7 @@
 package com.example.movemedicalscheduleapp.view_model
 
 import android.app.Application
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -26,7 +27,7 @@ import java.time.LocalDateTime
 class DataViewModelTest: TestCase() {
     private lateinit var dataViewModel: DataViewModel
     private val typeConverter: TypeConverter = TypeConverter()
-
+    private lateinit var localContext: Context
     @get:Rule
     val instantTasExecutorRule = InstantTaskExecutorRule()
 
@@ -35,6 +36,7 @@ class DataViewModelTest: TestCase() {
         super.setUp()
         val application = ApplicationProvider.getApplicationContext() as Application
         dataViewModel = DataViewModel(application)
+        localContext = application.applicationContext
     }
 
     @After
@@ -311,5 +313,113 @@ class DataViewModelTest: TestCase() {
         Truth.assertThat(resultList.any {
             it == correctedAppt
         }).isFalse()
+    }
+
+    @Test
+    fun partialOverlappingAppointments() = kotlinx.coroutines.test.runTest {
+        //Insert Appt 1
+        val sanitizedDateTime1 = typeConverter.longToLocalDateTime(
+            typeConverter.localDateTimeToLong(LocalDateTime.now())
+        )!!
+        val appt1 = Appointment(
+            title = "Test Title",
+            datetime = sanitizedDateTime1,
+            location = ApptLocation.DALLAS,
+            duration = Duration.ofMinutes(45L),
+            description = "Test Description"
+        )
+        val resultId1 = dataViewModel.upsertAppointment(appt1)
+        Truth.assertThat(resultId1 >= 0).isTrue()
+        val correctedAppt1 = appt1.copy(
+            rowid = resultId1
+        )
+        //Prep Appt 2
+        val sanitizedDateTime2 = typeConverter.longToLocalDateTime(
+            typeConverter.localDateTimeToLong(LocalDateTime.now().minusMinutes(10L))
+        )!!
+        val appt2 = Appointment(
+            title = "Test Title",
+            datetime = sanitizedDateTime2,
+            location = ApptLocation.DALLAS,
+            duration = Duration.ofMinutes(45L),
+            description = "Test Description"
+        )
+        //Confirm Overlap
+        val resultList2 = dataViewModel.getOverlappingAppointments(localContext, appt2)
+        Truth.assertThat(resultList2.any {
+            it == correctedAppt1
+        }).isTrue()
+    }
+
+    @Test
+    fun fullOverlappingAppointments() = kotlinx.coroutines.test.runTest {
+        //Insert Appt1
+        val sanitizedDateTime1 = typeConverter.longToLocalDateTime(
+            typeConverter.localDateTimeToLong(LocalDateTime.now())
+        )!!
+        val appt1 = Appointment(
+            title = "Test Title",
+            datetime = sanitizedDateTime1,
+            location = ApptLocation.DALLAS,
+            duration = Duration.ofMinutes(45L),
+            description = "Test Description"
+        )
+        val resultId1 = dataViewModel.upsertAppointment(appt1)
+        Truth.assertThat(resultId1 >= 0).isTrue()
+        val correctedAppt1 = appt1.copy(
+            rowid = resultId1
+        )
+        //Prep Appt 2
+        val sanitizedDateTime2 = typeConverter.longToLocalDateTime(
+            typeConverter.localDateTimeToLong(LocalDateTime.now().minusMinutes(10L))
+        )!!
+        val appt2 = Appointment(
+            title = "Test Title",
+            datetime = sanitizedDateTime2,
+            location = ApptLocation.DALLAS,
+            duration = Duration.ofMinutes(65L),
+            description = "Test Description"
+        )
+        //Confirm Overlap
+        val resultList2 = dataViewModel.getOverlappingAppointments(localContext, appt2)
+        Truth.assertThat(resultList2.any {
+            it == correctedAppt1
+        }).isTrue()
+    }
+
+    @Test
+    fun noOverlappingAppointments() = kotlinx.coroutines.test.runTest {
+        //Insert Appt1
+        val sanitizedDateTime1 = typeConverter.longToLocalDateTime(
+            typeConverter.localDateTimeToLong(LocalDateTime.now())
+        )!!
+        val appt1 = Appointment(
+            title = "Test Title",
+            datetime = sanitizedDateTime1,
+            location = ApptLocation.DALLAS,
+            duration = Duration.ofMinutes(45L),
+            description = "Test Description"
+        )
+        val resultId1 = dataViewModel.upsertAppointment(appt1)
+        Truth.assertThat(resultId1 >= 0).isTrue()
+        val correctedAppt1 = appt1.copy(
+            rowid = resultId1
+        )
+        //Prep Appt 2
+        val sanitizedDateTime2 = typeConverter.longToLocalDateTime(
+            typeConverter.localDateTimeToLong(LocalDateTime.now().plusHours(2L))
+        )!!
+        val appt2 = Appointment(
+            title = "Test Title",
+            datetime = sanitizedDateTime2,
+            location = ApptLocation.DALLAS,
+            duration = Duration.ofMinutes(65L),
+            description = "Test Description"
+        )
+        //Confirm Overlap
+        val resultList2 = dataViewModel.getOverlappingAppointments(localContext, appt2)
+        Truth.assertThat(resultList2.none {
+            it == correctedAppt1
+        }).isTrue()
     }
 }

@@ -1,7 +1,11 @@
 package com.example.movemedicalscheduleapp.ui.components.bottombars
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.example.movemedicalscheduleapp.ui.ComposableConstants
 import com.example.movemedicalscheduleapp.ui.components.icons.SizedIcon
 
@@ -13,10 +17,15 @@ fun ScheduleBottomBar(
     BottomAppBar(
         actions = {
             Button(
-                elevation = ButtonDefaults.elevatedButtonElevation(),
+                modifier = Modifier.padding(12.dp),
+                elevation = ComposableConstants.fabButtonElevation(),
                 onClick = {onScrollToToday() }) {
                 SizedIcon(iconDrawable = ComposableConstants.todayIcon)
-                Text("Scroll To Today")
+                Text(text = "Today",
+                    maxLines = 1,
+                    softWrap = false,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge,)
             }
         },
         floatingActionButton = {

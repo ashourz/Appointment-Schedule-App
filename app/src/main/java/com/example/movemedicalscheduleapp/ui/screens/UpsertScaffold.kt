@@ -3,12 +3,11 @@ package com.example.movemedicalscheduleapp.ui.screens
 import androidx.activity.compose.BackHandler
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.data.entity.ApptLocation
@@ -23,9 +22,7 @@ import com.example.movemedicalscheduleapp.ui.components.text.LocationDropDown
 import com.example.movemedicalscheduleapp.ui.components.validation.addUpdateAppointmentValidation
 import com.example.movemedicalscheduleapp.ui.ui_data_class.TempAppointmentProperties
 import com.example.movemedicalscheduleapp.view_model.DataViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
+import kotlinx.coroutines.*
 
 @Composable
 fun UpsertScaffold(
@@ -33,7 +30,8 @@ fun UpsertScaffold(
     dataViewModel: DataViewModel,
     update: Boolean,
     onNavigateAway: () -> Unit
-    ) {
+) {
+    val localContext = LocalContext.current
     val coroutineScopeIO = rememberCoroutineScope().plus(Dispatchers.IO)
     val tempAppointmentProperties by dataViewModel.temporaryAppointmentPropertiesFlow.collectAsState()
     //region: Error States
@@ -41,7 +39,6 @@ fun UpsertScaffold(
     var appointmentLocationError: String? by remember { mutableStateOf(null) }
     var appointmentDurationError: String? by remember { mutableStateOf(null) }
     var updateError: String? by remember { mutableStateOf(null) }
-
     //endregion
 
     DisposableEffect(key1 = Unit) {
@@ -69,7 +66,7 @@ fun UpsertScaffold(
         } else {
             "Add"
         },
-        validation = {
+        dataValidation = {
             addUpdateAppointmentValidation(
                 tempAppointmentProperties = tempAppointmentProperties,
                 updateAppointmentTitleError = { updatedTitleError ->
@@ -86,6 +83,19 @@ fun UpsertScaffold(
                 }
             )
         },
+        overlapValidation = { runBlocking {
+            return@runBlocking coroutineScopeIO.async {
+                return@async dataViewModel.getOverlappingAppointments(
+                    localContext = localContext,
+                    appointment = Appointment(
+                        title = tempAppointmentProperties.appointmentTitle?:"",
+                        location = tempAppointmentProperties.appointmentLocation,
+                        datetime = tempAppointmentProperties.appointmentDate.atTime(tempAppointmentProperties.appointmentTime),
+                        duration = tempAppointmentProperties.duration,
+                        description = tempAppointmentProperties.description?:""
+                    ))
+            }.await().isEmpty()
+        }},
         onActionButtonClick = {
             coroutineScopeIO.launch {
                 dataViewModel.upsertAppointment(
@@ -105,6 +115,7 @@ fun UpsertScaffold(
             onNavigateAway()
         }
     ) {
+
         if (updateError != null) {
             ErrorText(errorText = updateError)
         }
@@ -122,6 +133,7 @@ fun UpsertScaffold(
                     textValue = tempAppointmentProperties.appointmentTitle,
                     label = "Appointment Title",
                     placeholder = "Enter Appointment Title",
+                    maxLines = 1,
                     leadingIconDrawable = ComposableConstants.nameIcon,
                     leadingIconContentDescription = "Appointment Title",
                     onValueChange = { updatedName ->

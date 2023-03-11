@@ -24,6 +24,7 @@ fun EditableTextField(
     textValue: String?,
     label: String,
     placeholder: String,
+    maxLines: Int = Int.MAX_VALUE,
     leadingIconDrawable: Int,
     leadingIconContentDescription: String,
     keyboardType: KeyboardType = KeyboardType.Text,
@@ -54,6 +55,7 @@ fun EditableTextField(
                     text = placeholder
                 )
             },
+            maxLines =  maxLines,
             leadingIcon = {
                 SizedIcon(
                     iconDrawable = leadingIconDrawable,

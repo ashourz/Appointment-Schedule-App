@@ -1,14 +1,14 @@
 package com.example.movemedicalscheduleapp.ui
 
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.movemedicalscheduleapp.R
 import java.time.LocalDate
 import java.time.Month
 
 object ComposableConstants {
-    val defaultNavigationBarHeight = 50.dp
     val defaultIconSize = 32.dp
 
     //region: Icons
@@ -27,6 +27,13 @@ object ComposableConstants {
     val calendarMinDate = LocalDate.of(2000, Month.JANUARY, 1)
     val calendarMaxDate = LocalDate.of(3000, Month.JANUARY, 1).minusDays(1L)
 
-
+    @Composable
+    fun fabButtonElevation(): ButtonElevation = ButtonDefaults.buttonElevation(
+        defaultElevation = 6.dp,
+        pressedElevation = 1.dp,
+        focusedElevation = 1.dp,
+        hoveredElevation = 3.dp,
+        disabledElevation = 0.dp
+    )
 
 }
