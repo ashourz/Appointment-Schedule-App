@@ -8,11 +8,11 @@ import java.time.LocalTime
 
 data class TempAppointmentProperties(
     val editingAppointment: Appointment? = null,
-    val appointmentTitle: String? = null,
-    val appointmentDate: LocalDate = LocalDate.now(),
-    val appointmentTime: LocalTime = LocalTime.now(),
+    val title: String? = null,
+    val date: LocalDate = LocalDate.now(),
+    val time: LocalTime = LocalTime.now(),
     val duration: Duration = Duration.ZERO,
-    val appointmentLocation: ApptLocation = ApptLocation.UNKNOWN,
+    val location: ApptLocation = ApptLocation.UNKNOWN,
     val description: String? = null,
     val existingApptError: String? = null,
     val successfulUpsert: Boolean = false

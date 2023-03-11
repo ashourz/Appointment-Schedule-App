@@ -88,9 +88,9 @@ fun UpsertScaffold(
                 return@async dataViewModel.getOverlappingAppointments(
                     localContext = localContext,
                     appointment = Appointment(
-                        title = tempAppointmentProperties.appointmentTitle?:"",
-                        location = tempAppointmentProperties.appointmentLocation,
-                        datetime = tempAppointmentProperties.appointmentDate.atTime(tempAppointmentProperties.appointmentTime),
+                        title = tempAppointmentProperties.title?:"",
+                        location = tempAppointmentProperties.location,
+                        datetime = tempAppointmentProperties.date.atTime(tempAppointmentProperties.time),
                         duration = tempAppointmentProperties.duration,
                         description = tempAppointmentProperties.description?:""
                     ))
@@ -101,9 +101,9 @@ fun UpsertScaffold(
                 dataViewModel.upsertAppointment(
                     Appointment(
                         rowid = tempAppointmentProperties.editingAppointment?.rowid ?: 0,
-                        title = tempAppointmentProperties.appointmentTitle ?: "",
-                        datetime = tempAppointmentProperties.appointmentDate.atTime(tempAppointmentProperties.appointmentTime),
-                        location = tempAppointmentProperties.appointmentLocation,
+                        title = tempAppointmentProperties.title ?: "",
+                        datetime = tempAppointmentProperties.date.atTime(tempAppointmentProperties.time),
+                        location = tempAppointmentProperties.location,
                         duration = tempAppointmentProperties.duration,
                         description = tempAppointmentProperties.description ?: ""
                     )
@@ -130,7 +130,7 @@ fun UpsertScaffold(
             ) {
                 EditableTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    textValue = tempAppointmentProperties.appointmentTitle,
+                    textValue = tempAppointmentProperties.title,
                     label = "Appointment Title",
                     placeholder = "Enter Appointment Title",
                     maxLines = 1,
@@ -139,7 +139,7 @@ fun UpsertScaffold(
                     onValueChange = { updatedName ->
                         dataViewModel.updateTempAppointmentProperties(
                             tempAppointmentProperties.copy(
-                                appointmentTitle = updatedName
+                                title = updatedName
                             )
                         )
                     },
@@ -155,10 +155,10 @@ fun UpsertScaffold(
                     placeholder = "Select Appointment Date",
                     leadingIconDrawable = ComposableConstants.calendarIcon,
                     leadingIconContentDescription = "Appointment Date",
-                    selectedDate = tempAppointmentProperties.appointmentDate,
+                    selectedDate = tempAppointmentProperties.date,
                     onDateSelected = { updatedDate ->
                         dataViewModel.updateTempAppointmentProperties(
-                            tempAppointmentProperties.copy(appointmentDate = updatedDate)
+                            tempAppointmentProperties.copy(date = updatedDate)
                         )
                     }
                 )
@@ -172,10 +172,10 @@ fun UpsertScaffold(
                     placeholder = "Select Appointment Time",
                     leadingIconDrawable = ComposableConstants.timeIcon,
                     leadingIconContentDescription = "Appointment Date",
-                    selectedTime = tempAppointmentProperties.appointmentTime,
+                    selectedTime = tempAppointmentProperties.time,
                     onTimeSelected = { updatedTime ->
                         dataViewModel.updateTempAppointmentProperties(
-                            tempAppointmentProperties.copy(appointmentTime = updatedTime)
+                            tempAppointmentProperties.copy(time = updatedTime)
                         )
                     }
                 )
@@ -204,15 +204,15 @@ fun UpsertScaffold(
                 LocationDropDown(
                     modifier = Modifier.fillMaxWidth(),
                     label = "Appointment Location",
-                    selectedLocation = if (tempAppointmentProperties.appointmentLocation == ApptLocation.UNKNOWN) {
+                    selectedLocation = if (tempAppointmentProperties.location == ApptLocation.UNKNOWN) {
                         null
                     } else {
-                        tempAppointmentProperties.appointmentLocation
+                        tempAppointmentProperties.location
                     },
                     onLocationSelected = { updatedApptLocation ->
                         dataViewModel.updateTempAppointmentProperties(
                             tempAppointmentProperties.copy(
-                                appointmentLocation = updatedApptLocation
+                                location = updatedApptLocation
                             )
                         )
                     },

@@ -37,6 +37,9 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
         _deleteAppointment.value = appointment
     }
     //endregion
+    //region: Database Error Flow
+    val snackbarMessages: StateFlow<String?> = appointmentRepo.snackbarMessageFlow.asStateFlow()
+    //endregion
     /**
      * Returns rowId on new insertion
      * Returns -1 on update

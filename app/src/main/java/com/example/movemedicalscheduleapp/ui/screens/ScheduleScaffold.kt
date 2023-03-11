@@ -5,19 +5,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.extensions.toDisplayFormat
-import com.example.movemedicalscheduleapp.ui.ComposableConstants
 import com.example.movemedicalscheduleapp.ui.components.bottombars.ScheduleBottomBar
 import com.example.movemedicalscheduleapp.ui.components.cards.AppointmentCard
-import com.example.movemedicalscheduleapp.ui.components.icons.SizedIcon
 import com.example.movemedicalscheduleapp.ui.components.toolbars.ScheduleTopBar
 import com.example.movemedicalscheduleapp.ui.popups.ConfirmCancelPopup
 import com.example.movemedicalscheduleapp.ui.ui_data_class.TempAppointmentProperties
@@ -40,18 +38,29 @@ fun ScheduleScaffold(
     val deleteAppointment by dataViewModel.deleteAppointment.collectAsState()
 
     val lazyListState = rememberLazyListState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val localContext = LocalContext.current
     val coroutineScopeMain = rememberCoroutineScope().plus(Dispatchers.Main)
+
+    val snackbarMessages by dataViewModel.snackbarMessages.collectAsState()
+    LaunchedEffect(key1 = snackbarMessages) {
+        snackbarMessages?.let { snackBarMessage ->
+            snackbarHostState.showSnackbar(
+                message = snackBarMessage,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
 
     val onEditAppointment = { editAppt: Appointment ->
         dataViewModel.updateTempAppointmentProperties(
             TempAppointmentProperties(
                 editingAppointment = editAppt,
-                appointmentTitle = editAppt.title,
-                appointmentDate = editAppt.datetime.toLocalDate(),
-                appointmentTime = editAppt.datetime.toLocalTime(),
+                title = editAppt.title,
+                date = editAppt.datetime.toLocalDate(),
+                time = editAppt.datetime.toLocalTime(),
                 duration = editAppt.duration,
-                appointmentLocation = editAppt.location,
+                location = editAppt.location,
                 description = editAppt.description
             )
         )
@@ -87,7 +96,9 @@ fun ScheduleScaffold(
                 pastAppointments.groupBy { it.datetime.toLocalDate() }.forEach { (localDate, appointments) ->
                     stickyHeader {
                         Row(
-                            modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer).fillMaxWidth()
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.secondaryContainer)
+                                .fillMaxWidth()
                         ) {
                             Text(
                                 modifier = Modifier.padding(8.dp),
@@ -112,7 +123,9 @@ fun ScheduleScaffold(
                 }
                 stickyHeader {
                     Row(
-                        modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer).fillMaxWidth()
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .fillMaxWidth()
                     ) {
                         Text(
                             modifier = Modifier.padding(8.dp),
@@ -144,7 +157,9 @@ fun ScheduleScaffold(
                 futureAppointments.groupBy { it.datetime.toLocalDate() }.forEach { (localDate, appointments) ->
                     stickyHeader {
                         Row(
-                            modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer).fillMaxWidth()
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.secondaryContainer)
+                                .fillMaxWidth()
                         ) {
                             Text(
                                 modifier = Modifier.padding(8.dp),

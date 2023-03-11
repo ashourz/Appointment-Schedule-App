@@ -19,7 +19,7 @@ fun addUpdateAppointmentValidation(
     updateAppointmentLocationError(null)
     updateUpdateError(null)
     //endregion
-    if(tempAppointmentProperties.appointmentTitle.isNullOrBlank()){
+    if(tempAppointmentProperties.title.isNullOrBlank()){
         updateAppointmentTitleError("Appointment Title Cannot Be Blank")
        validationBoolean = false
     }
@@ -27,16 +27,16 @@ fun addUpdateAppointmentValidation(
         updateAppointmentDurationError("Appointment Duration Must Be Greater Than 0 Minutes")
         validationBoolean = false
     }
-    if (tempAppointmentProperties.appointmentLocation == ApptLocation.UNKNOWN) {
+    if (tempAppointmentProperties.location == ApptLocation.UNKNOWN) {
         updateAppointmentLocationError("Appointment Location Cannot Be Blank")
         validationBoolean = false
     }
     if (tempAppointmentProperties.editingAppointment != null &&
-        tempAppointmentProperties.appointmentTitle ==        tempAppointmentProperties.editingAppointment.title &&
-        tempAppointmentProperties.appointmentDate ==        tempAppointmentProperties.editingAppointment.datetime.toLocalDate() &&
-        tempAppointmentProperties.appointmentTime ==        tempAppointmentProperties.editingAppointment.datetime.toLocalTime() &&
+        tempAppointmentProperties.title ==        tempAppointmentProperties.editingAppointment.title &&
+        tempAppointmentProperties.date ==        tempAppointmentProperties.editingAppointment.datetime.toLocalDate() &&
+        tempAppointmentProperties.time ==        tempAppointmentProperties.editingAppointment.datetime.toLocalTime() &&
         tempAppointmentProperties.duration ==               tempAppointmentProperties.editingAppointment.duration &&
-        tempAppointmentProperties.appointmentLocation ==    tempAppointmentProperties.editingAppointment.location &&
+        tempAppointmentProperties.location ==    tempAppointmentProperties.editingAppointment.location &&
         tempAppointmentProperties.description ==            tempAppointmentProperties.editingAppointment.description
     ) {
         updateUpdateError("No Changes Have Been Made")
