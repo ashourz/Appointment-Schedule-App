@@ -175,10 +175,10 @@ class ScheduleScaffoldKtTest : TestCase() {
         clickableAppointmentCard.performClick()
         //Assert Update and Cancel Button Options are displayed
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.delete_text)
+        val deleteLabel = activity.getString(R.string.delete_text)
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
-        val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()
-        cancel.performClick()
+        val delete = composeTestRule.onNodeWithText(deleteLabel).assertIsDisplayed().assertHasClickAction()
+        delete.performClick()
         //Assert Confirm Cancel Appointment Dialog displayed
         //Assert Buttons displayed
         val keepAppointmentLabel = composeTestRule.activity.getString(R.string.keep_appointment)
@@ -201,10 +201,10 @@ class ScheduleScaffoldKtTest : TestCase() {
         clickableAppointmentCard.performClick()
         //Assert Update and Cancel Button Options are displayed
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.delete_text)
+        val deleteLabel = activity.getString(R.string.delete_text)
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
-        val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()
-        cancel.performClick()
+        val delete = composeTestRule.onNodeWithText(deleteLabel).assertIsDisplayed().assertHasClickAction()
+        delete.performClick()
         //Assert Confirm Cancel Appointment Dialog displayed
         //Assert Buttons displayed
         val keepAppointmentLabel = composeTestRule.activity.getString(R.string.keep_appointment)
@@ -229,9 +229,9 @@ class ScheduleScaffoldKtTest : TestCase() {
         clickableAppointmentCard.performClick()
         //Assert Update and Cancel Button Options are displayed
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.delete_text)
+        val deleteLabel = activity.getString(R.string.delete_text)
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
-        val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()
+        val delete = composeTestRule.onNodeWithText(deleteLabel).assertIsDisplayed().assertHasClickAction()
         update.performClick()
         assertThat(!navigateToAddAppointment && natigateToUpdateAppointment).isTrue()
     }

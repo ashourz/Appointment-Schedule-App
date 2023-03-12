@@ -53,6 +53,7 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
      * */
     private val _scheduleScaffoldLazyListState: MutableStateFlow<LazyListState> = MutableStateFlow(LazyListState())
     val scheduleScaffoldLazyListState: StateFlow<LazyListState> = _scheduleScaffoldLazyListState.asStateFlow()
+
     // Used by init in DataViewModel
     // Scroll Schedule Scaffold LazyListState to the top of the Today Appointment Card section
     private fun initializeScrollScheduleLazyListToToday() {
@@ -62,30 +63,47 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
         dataViewModelScope.launch {
             pastAppointmentStateFlow.firstOrNull()?.groupBy { it.datetime.toLocalDate() }?.map { 1 + it.value.count() }?.sum()?.let { todayIndex ->
                 if (todayIndex < _scheduleScaffoldLazyListState.value.layoutInfo.totalItemsCount) {
-                        _scheduleScaffoldLazyListState.value.scrollToItem(todayIndex, 0)
+                    _scheduleScaffoldLazyListState.value.scrollToItem(todayIndex, 0)
                 }
             }
         }
     }
+
+    /**
+     * Indicating State Flow of initial load of Schedule Scaffold, when suspend fun onInitialScheduleLoad() will auto-scroll Schedule to Today Header.
+     * */
+    private var _initialScheduleLoad: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val initialScheduleLoad: StateFlow<Boolean> = _initialScheduleLoad.asStateFlow()
+    /**
+     * To be used only from UI Main Thread as LazyList Scroll must only be done in scope of LazyList
+     * */
+    suspend fun onInitialScheduleLoad() {
+        animateScrollScheduleLazyListToToday()
+        _initialScheduleLoad.value = true
+    }
+
     // Used by Today Button in Schedule Scaffold:
     // Animate Scroll Schedule Scaffold LazyListState to the top of the Today Appointment Card section
     suspend fun animateScrollScheduleLazyListToToday() {
         // Get Sum of all date groups plus all appointments within each.
         // This will equal the number of items produced by pastAppointmentStateFlow.
         // This will equal the index of the today item
-            pastAppointmentStateFlow.firstOrNull()?.groupBy { it.datetime.toLocalDate() }?.map { 1 + it.value.count() }?.sum()?.let { todayIndex ->
-                if (todayIndex < _scheduleScaffoldLazyListState.value.layoutInfo.totalItemsCount) {
-                    _scheduleScaffoldLazyListState.value.animateScrollToItem(todayIndex, 0)
-                }
+        pastAppointmentStateFlow.firstOrNull()?.groupBy { it.datetime.toLocalDate() }?.map { 1 + it.value.count() }?.sum()?.let { todayIndex ->
+            if (todayIndex < _scheduleScaffoldLazyListState.value.layoutInfo.totalItemsCount) {
+                _scheduleScaffoldLazyListState.value.animateScrollToItem(todayIndex, 0)
             }
+        }
     }
+
     /**
      * Cancel Appointment States and Operations
      * */
     //Mutable state of Appointment selected to be deleted for displaying it to ConfirmDeletePopup
     private var _deleteAppointment: MutableStateFlow<Appointment?> = MutableStateFlow(null)
+
     // Holds state of Appointment selected to be deleted for displaying it to ConfirmDeletePopup
     val deleteAppointment: StateFlow<Appointment?> = _deleteAppointment.asStateFlow()
+
     //Updates state of Appointment selected to be deleted for displaying it to ConfirmDeletePopup
     fun updateCancelAppointment(appointment: Appointment?) {
         _deleteAppointment.value = appointment
@@ -98,7 +116,7 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
      * */
     private var _expandedAppointmentCardIdStateFlow: MutableStateFlow<Long?> = MutableStateFlow(null)
     val expandedAppointmentCardIdStateFlow: StateFlow<Long?> = _expandedAppointmentCardIdStateFlow.asStateFlow()
-    fun updateExpandedAppointmentCardId(expandedAppointmentCardId: Long?){
+    fun updateExpandedAppointmentCardId(expandedAppointmentCardId: Long?) {
         _expandedAppointmentCardIdStateFlow.value = expandedAppointmentCardId
     }
     //endregion
@@ -108,7 +126,7 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
     val snackbarMessages: SharedFlow<String?> = appointmentRepo.snackbarMessageFlow.asSharedFlow()
     //endregion
 
-    init{
+    init {
         /**
          * Scroll to Todays Date in Schedule Scaffold on opening the app
          * */
@@ -151,7 +169,7 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    suspend fun deleteAll(){
+    suspend fun deleteAll() {
         withContext(dataViewModelScope.coroutineContext) {
             appointmentRepo.deleteAll()
         }

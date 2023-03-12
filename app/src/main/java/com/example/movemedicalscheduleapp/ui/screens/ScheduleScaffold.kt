@@ -52,6 +52,15 @@ fun ScheduleScaffold(
     val coroutineScope = rememberCoroutineScope()
     //region: Schedule Scaffold LazyListState
     val scheduleScaffoldLazyListState by dataViewModel.scheduleScaffoldLazyListState.collectAsState()
+    //Run onInitialScheduleLoad on first starting the application from a Destroyed State (scrolling lazylist to today header)
+    val initialScheduleLoad by dataViewModel.initialScheduleLoad.collectAsState()
+    LaunchedEffect(key1 = initialScheduleLoad){
+        if(!initialScheduleLoad){
+            coroutineScope.launch {
+                dataViewModel.onInitialScheduleLoad()
+            }
+        }
+    }
     //endregion
 
     //region: Data States

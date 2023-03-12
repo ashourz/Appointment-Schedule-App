@@ -98,10 +98,10 @@ class AppointmentCardKtTest{
             }
         }
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.delete_text)
+        val deleteLabel = activity.getString(R.string.delete_text)
         val card = composeTestRule.onNodeWithText(appointmentTitle).assertIsDisplayed().assertHasClickAction()
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
-        val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()
+        val delete = composeTestRule.onNodeWithText(deleteLabel).assertIsDisplayed().assertHasClickAction()
 
         card.performClick()
         Truth.assertThat(cardClicked && !updateClicked && !cancelClicked).isTrue()
@@ -125,12 +125,12 @@ class AppointmentCardKtTest{
             }
         }
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.delete_text)
+        val deleteLabel = activity.getString(R.string.delete_text)
         val card = composeTestRule.onNodeWithText(appointmentTitle).assertIsDisplayed().assertHasClickAction()
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
-        val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()
+        val delete = composeTestRule.onNodeWithText(deleteLabel).assertIsDisplayed().assertHasClickAction()
 
-        cancel.performClick()
+        delete.performClick()
         Truth.assertThat(!cardClicked && !updateClicked && cancelClicked).isTrue()
     }
 
@@ -152,10 +152,10 @@ class AppointmentCardKtTest{
             }
         }
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.delete_text)
+        val deleteLabel = activity.getString(R.string.delete_text)
         val card = composeTestRule.onNodeWithText(appointmentTitle).assertIsDisplayed().assertHasClickAction()
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
-        val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()
+        val delete = composeTestRule.onNodeWithText(deleteLabel).assertIsDisplayed().assertHasClickAction()
 
         update.performClick()
         Truth.assertThat(!cardClicked && updateClicked && !cancelClicked).isTrue()
