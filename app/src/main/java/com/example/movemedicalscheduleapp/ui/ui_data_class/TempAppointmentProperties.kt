@@ -22,6 +22,9 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
 
+/**
+ * Default Values and stored value entity for managing datavalue fields in add/update screen within upsert scaffold
+ * */
 data class TempAppointmentProperties(
     val editingAppointment: Appointment? = null,
     val title: String? = null,

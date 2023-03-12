@@ -20,6 +20,9 @@ import com.example.movemedicalscheduleapp.data.entity.ApptLocation
 import com.example.movemedicalscheduleapp.ui.ui_data_class.TempAppointmentProperties
 import java.time.Duration
 
+/**
+ * Validation used in UpsertScaffold on Add/Update Button execution
+ * */
 fun addUpdateAppointmentValidation(
     tempAppointmentProperties: TempAppointmentProperties,
     updateAppointmentTitleError: (Boolean) -> Unit,

@@ -105,7 +105,7 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
 
     //region: Snackbar Message Flow and State
     val snackbarHostStateFlow: StateFlow<SnackbarHostState> = MutableStateFlow(SnackbarHostState()).asStateFlow()
-    val snackbarMessages: StateFlow<String?> = appointmentRepo.snackbarMessageFlow.asStateFlow()
+    val snackbarMessages: SharedFlow<String?> = appointmentRepo.snackbarMessageFlow.asSharedFlow()
     //endregion
 
     init{
@@ -135,6 +135,9 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /**
+     * Returns any existing appointments for the same location and overlapping in any time periods for the provided appointment.
+     * */
     suspend fun getOverlappingAppointments(localContext: Context, appointment: Appointment): List<Appointment> {
         withContext(dataViewModelScope.coroutineContext) {
             appointmentRepo.getOverlappingAppointments(appointment)

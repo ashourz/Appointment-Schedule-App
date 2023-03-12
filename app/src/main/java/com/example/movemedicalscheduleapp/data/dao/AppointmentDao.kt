@@ -52,16 +52,17 @@ interface AppointmentDao {
     fun getAllFutureAppointments(tomorrowSQLiteLong: Long = getTomorrowSQLLong()): Flow<List<Appointment>>
 
     /**
-     * Find Overlapping Appointments
+     * Returns any existing appointments for the same location and overlapping in any time periods for the provided appointment.
      * */
     @Transaction
     @Query("""SELECT * FROM appointment_table WHERE 
+            rowId != :rowId AND
             location = :locationInt AND
             ((datetime <= :apptStartSQLLong AND (datetime + duration) >= :apptStartSQLLong) OR
             (datetime >= :apptStartSQLLong AND (datetime + duration) <= :apptEndSQLLong) OR
             (datetime <= :apptEndSQLLong AND (datetime + duration) >= :apptEndSQLLong) OR
             (datetime <= :apptStartSQLLong AND (datetime + duration) >= :apptEndSQLLong))""")
-    fun getOverlappingAppointments(locationInt: Int, apptStartSQLLong: Long, apptEndSQLLong: Long): List<Appointment>
+    fun getOverlappingAppointments(rowId: Long, locationInt: Int, apptStartSQLLong: Long, apptEndSQLLong: Long): List<Appointment>
 
     @Transaction
     @Query

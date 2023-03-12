@@ -65,7 +65,7 @@ fun ScheduleScaffold(
 
     //region: Snackbar State, Messages and LaunchedEffect
     val snackbarHostState by dataViewModel.snackbarHostStateFlow.collectAsState()
-    val snackbarMessages by dataViewModel.snackbarMessages.collectAsState()
+    val snackbarMessages by dataViewModel.snackbarMessages.collectAsState(initial = null)
     LaunchedEffect(key1 = snackbarMessages) {
         snackbarMessages?.let { snackBarMessage ->
             //Show snackbar message on every non-null value

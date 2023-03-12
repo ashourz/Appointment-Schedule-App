@@ -379,6 +379,7 @@ class AppointmentDaoTest: TestCase() {
         )
         //Confirm Overlap
         val resultList2 = dao.getOverlappingAppointments(
+            rowId = appt2.rowid,
             locationInt = appt2.location.zipCode,
             apptStartSQLLong = appt2.datetime.toSQLLong(),
             apptEndSQLLong = appt2.datetime.plus(appt2.duration).toSQLLong()
@@ -419,6 +420,7 @@ class AppointmentDaoTest: TestCase() {
         )
         //Confirm Overlap
         val resultList2 = dao.getOverlappingAppointments(
+            rowId = appt2.rowid,
             locationInt = appt2.location.zipCode,
             apptStartSQLLong = appt2.datetime.toSQLLong(),
             apptEndSQLLong = appt2.datetime.plus(appt2.duration).toSQLLong()
@@ -459,6 +461,7 @@ class AppointmentDaoTest: TestCase() {
         )
         //Confirm Overlap
         val resultList2 = dao.getOverlappingAppointments(
+            rowId = appt2.rowid,
             locationInt = appt2.location.zipCode,
             apptStartSQLLong = appt2.datetime.toSQLLong(),
             apptEndSQLLong = appt2.datetime.plus(appt2.duration).toSQLLong()
