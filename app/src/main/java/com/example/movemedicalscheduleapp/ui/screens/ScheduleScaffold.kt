@@ -32,11 +32,10 @@ import androidx.compose.ui.unit.dp
 import com.example.movemedicalscheduleapp.R
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.extensions.toDisplayFormat
-import com.example.movemedicalscheduleapp.extensions.toEpochMilli
 import com.example.movemedicalscheduleapp.ui.components.bottombars.ScheduleBottomBar
 import com.example.movemedicalscheduleapp.ui.components.cards.AppointmentCard
 import com.example.movemedicalscheduleapp.ui.components.toolbars.BasicTopBar
-import com.example.movemedicalscheduleapp.ui.popups.ConfirmCancelPopup
+import com.example.movemedicalscheduleapp.ui.popups.ConfirmDeletePopup
 import com.example.movemedicalscheduleapp.ui.ui_data_class.TempAppointmentProperties
 import com.example.movemedicalscheduleapp.view_model.DataViewModel
 import kotlinx.coroutines.launch
@@ -59,7 +58,7 @@ fun ScheduleScaffold(
     val pastAppointments by dataViewModel.pastAppointmentStateFlow.collectAsState(initial = emptyList())
     val todayAppointments by dataViewModel.todayAppointmentStateFlow.collectAsState(initial = emptyList())
     val futureAppointments by dataViewModel.futureAppointmentStateFlow.collectAsState(initial = emptyList())
-    val cancelAppointment by dataViewModel.cancelAppointment.collectAsState()
+    val cancelAppointment by dataViewModel.deleteAppointment.collectAsState()
     val expandedAppointmentCardId by dataViewModel.expandedAppointmentCardIdStateFlow.collectAsState()
     //endregion
 
@@ -113,7 +112,7 @@ fun ScheduleScaffold(
      * Updates updateCancelAppointment state to Appointment selected for cancellation.
      * This in turn triggers ConfirmCancelPopup to be displayed on non-null updateCancelAppointment values
      * */
-    val onCancelAppointment = { cancelAppt: Appointment ->
+    val onDeleteAppointment = { cancelAppt: Appointment ->
         dataViewModel.updateCancelAppointment(cancelAppt)
     }
 
@@ -170,8 +169,8 @@ fun ScheduleScaffold(
                                 onUpdateAppointment = { updateAppt ->
                                     onUpdateAppointment(updateAppt)
                                 },
-                                onCancelAppointment = { cancelAppt ->
-                                    onCancelAppointment(cancelAppt)
+                                onDeleteAppointment = { cancelAppt ->
+                                    onDeleteAppointment(cancelAppt)
                                 })
                         }
                     }
@@ -209,8 +208,8 @@ fun ScheduleScaffold(
                                 onUpdateAppointment = { updateAppt ->
                                     onUpdateAppointment(updateAppt)
                                 },
-                                onCancelAppointment = { cancelAppt ->
-                                    onCancelAppointment(cancelAppt)
+                                onDeleteAppointment = { cancelAppt ->
+                                    onDeleteAppointment(cancelAppt)
                                 })
                         }
                     }
@@ -252,8 +251,8 @@ fun ScheduleScaffold(
                                 onUpdateAppointment = { updateAppt ->
                                     onUpdateAppointment(updateAppt)
                                 },
-                                onCancelAppointment = { cancelAppt ->
-                                    onCancelAppointment(cancelAppt)
+                                onDeleteAppointment = { cancelAppt ->
+                                    onDeleteAppointment(cancelAppt)
                                 })
                         }
                     }
@@ -267,7 +266,7 @@ fun ScheduleScaffold(
         }
         //Display ConfirmCancelPopup on all null
         if (cancelAppointment != null) {
-            ConfirmCancelPopup(
+            ConfirmDeletePopup(
                 appointment = cancelAppointment!!,
                 onCancelAppointment = {appointment ->
                     coroutineScope.launch {

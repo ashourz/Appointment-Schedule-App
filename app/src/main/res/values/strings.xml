@@ -54,10 +54,11 @@
     <string name="appointment_location">Appointment Location</string>
     <string name="appointment_time">Time</string>
     <string name="appointment_title">Title</string>
-    <string name="cancel_appointment">Cancel Appointment</string>
     <string name="cancel_text">Cancel</string>
-    <string name="confirm_cancel_appointment">Confirm Cancel Appointment</string>
-    <string name="confirm_cancel_appointment_prefix">Confirm Cancel Appointment:&#160;</string>
+    <string name="delete_appointment">Delete Appointment</string>
+    <string name="delete_text">Delete</string>
+    <string name="confirm_delete_appointment">Confirm Delete Appointment</string>
+    <string name="confirm_delete_appointment_prefix">Confirm Delete Appointment:&#160;</string>
     <string name="description_prefix">Description:&#160;</string>
     <string name="dropdown_arrow">Dropdown Arrow</string>
     <string name="enter_appointment_description">Enter Description</string>

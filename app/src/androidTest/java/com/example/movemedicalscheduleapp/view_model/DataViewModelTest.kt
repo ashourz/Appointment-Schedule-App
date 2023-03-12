@@ -130,10 +130,10 @@ class DataViewModelTest: TestCase() {
             description = "Test Description"
         )
         dataViewModel.updateCancelAppointment(appt)
-        val result1 = dataViewModel.cancelAppointment.first()
+        val result1 = dataViewModel.deleteAppointment.first()
         assertThat(result1 == appt).isTrue()
         dataViewModel.updateCancelAppointment(null)
-        val result2 = dataViewModel.cancelAppointment.first()
+        val result2 = dataViewModel.deleteAppointment.first()
         assertThat(result2 == null).isTrue()
     }
 

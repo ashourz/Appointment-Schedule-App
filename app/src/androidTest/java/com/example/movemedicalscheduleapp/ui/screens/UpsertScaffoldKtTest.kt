@@ -16,11 +16,9 @@
 
 package com.example.movemedicalscheduleapp.ui.screens
 
-import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -147,7 +145,7 @@ class UpsertScaffoldKtTest : TestCase() {
         canNavigateToInsertScaffold()
         //Assert Bottom Bar button Present
         val addText = activity.getString(R.string.add_text)
-        val cancelText = activity.getString(R.string.cancel_text)
+        val cancelText = activity.getString(R.string.delete_text)
         val addButton = composeTestRule.onNodeWithText(addText).assertIsDisplayed()
         val cancelButton = composeTestRule.onNodeWithText(cancelText).assertIsDisplayed()
         //Click Add with default values present

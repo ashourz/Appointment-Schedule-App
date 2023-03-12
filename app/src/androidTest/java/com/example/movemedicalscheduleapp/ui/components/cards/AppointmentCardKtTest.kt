@@ -71,7 +71,7 @@ class AppointmentCardKtTest{
                     expanded = false,
                     onExpandAppointmentCard = { cardClicked = true},
                     onUpdateAppointment = {updateClicked = true},
-                    onCancelAppointment = {cancelClicked = true}
+                    onDeleteAppointment = {cancelClicked = true}
                 )
             }
         }
@@ -93,12 +93,12 @@ class AppointmentCardKtTest{
                     expanded = true,
                     onExpandAppointmentCard = { cardClicked = true},
                     onUpdateAppointment = {updateClicked = true},
-                    onCancelAppointment = {cancelClicked = true}
+                    onDeleteAppointment = {cancelClicked = true}
                 )
             }
         }
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.cancel_text)
+        val cancelLabel = activity.getString(R.string.delete_text)
         val card = composeTestRule.onNodeWithText(appointmentTitle).assertIsDisplayed().assertHasClickAction()
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
         val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()
@@ -120,12 +120,12 @@ class AppointmentCardKtTest{
                     expanded = true,
                     onExpandAppointmentCard = { cardClicked = true},
                     onUpdateAppointment = {updateClicked = true},
-                    onCancelAppointment = {cancelClicked = true}
+                    onDeleteAppointment = {cancelClicked = true}
                 )
             }
         }
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.cancel_text)
+        val cancelLabel = activity.getString(R.string.delete_text)
         val card = composeTestRule.onNodeWithText(appointmentTitle).assertIsDisplayed().assertHasClickAction()
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
         val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()
@@ -147,12 +147,12 @@ class AppointmentCardKtTest{
                     expanded = true,
                     onExpandAppointmentCard = { cardClicked = true},
                     onUpdateAppointment = {updateClicked = true},
-                    onCancelAppointment = {cancelClicked = true}
+                    onDeleteAppointment = {cancelClicked = true}
                 )
             }
         }
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.cancel_text)
+        val cancelLabel = activity.getString(R.string.delete_text)
         val card = composeTestRule.onNodeWithText(appointmentTitle).assertIsDisplayed().assertHasClickAction()
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
         val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()

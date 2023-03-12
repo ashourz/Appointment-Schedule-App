@@ -22,26 +22,22 @@ import androidx.activity.ComponentActivity
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.room.Transaction
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.movemedicalscheduleapp.R
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.data.entity.ApptLocation
-import com.example.movemedicalscheduleapp.extensions.toDisplayFormat
 import com.example.movemedicalscheduleapp.ui.theme.MoveMedicalScheduleAppTheme
 import com.example.movemedicalscheduleapp.view_model.DataViewModel
 import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.first
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -179,7 +175,7 @@ class ScheduleScaffoldKtTest : TestCase() {
         clickableAppointmentCard.performClick()
         //Assert Update and Cancel Button Options are displayed
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.cancel_text)
+        val cancelLabel = activity.getString(R.string.delete_text)
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
         val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()
         cancel.performClick()
@@ -188,7 +184,7 @@ class ScheduleScaffoldKtTest : TestCase() {
         val keepAppointmentLabel = composeTestRule.activity.getString(R.string.keep_appointment)
         val keepAppointmentButton = composeTestRule.onNodeWithText(keepAppointmentLabel).assertIsDisplayed().assertHasClickAction()
 
-        val cancelAppointmentLabel = composeTestRule.activity.getString(R.string.cancel_appointment)
+        val cancelAppointmentLabel = composeTestRule.activity.getString(R.string.delete_appointment)
         val cancelAppointmentButton = composeTestRule.onNodeWithText(cancelAppointmentLabel).assertIsDisplayed().assertHasClickAction()
 
         cancelAppointmentButton.performClick()
@@ -205,7 +201,7 @@ class ScheduleScaffoldKtTest : TestCase() {
         clickableAppointmentCard.performClick()
         //Assert Update and Cancel Button Options are displayed
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.cancel_text)
+        val cancelLabel = activity.getString(R.string.delete_text)
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
         val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()
         cancel.performClick()
@@ -214,7 +210,7 @@ class ScheduleScaffoldKtTest : TestCase() {
         val keepAppointmentLabel = composeTestRule.activity.getString(R.string.keep_appointment)
         val keepAppointmentButton = composeTestRule.onNodeWithText(keepAppointmentLabel).assertIsDisplayed().assertHasClickAction()
 
-        val cancelAppointmentLabel = composeTestRule.activity.getString(R.string.cancel_appointment)
+        val cancelAppointmentLabel = composeTestRule.activity.getString(R.string.delete_appointment)
         val cancelAppointmentButton = composeTestRule.onNodeWithText(cancelAppointmentLabel).assertIsDisplayed().assertHasClickAction()
 
         keepAppointmentButton.performClick()
@@ -233,7 +229,7 @@ class ScheduleScaffoldKtTest : TestCase() {
         clickableAppointmentCard.performClick()
         //Assert Update and Cancel Button Options are displayed
         val updateLabel = activity.getString(R.string.update_text)
-        val cancelLabel = activity.getString(R.string.cancel_text)
+        val cancelLabel = activity.getString(R.string.delete_text)
         val update = composeTestRule.onNodeWithText(updateLabel).assertIsDisplayed().assertHasClickAction()
         val cancel = composeTestRule.onNodeWithText(cancelLabel).assertIsDisplayed().assertHasClickAction()
         update.performClick()

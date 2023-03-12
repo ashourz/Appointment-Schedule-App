@@ -30,7 +30,7 @@ import org.junit.Test
 import java.time.Duration
 import java.time.LocalDateTime
 
-class ConfirmCancelPopupKtTest{
+class ConfirmDeletePopupKtTest{
     private var closePerformed = false
     private var cancelPerformed = false
     private var canceledAppointment: Appointment? = null
@@ -52,7 +52,7 @@ class ConfirmCancelPopupKtTest{
         // Start the app
         composeTestRule.setContent {
             MoveMedicalScheduleAppTheme() {
-                ConfirmCancelPopup(
+                ConfirmDeletePopup(
                     appointment = appointment,
                     onCancelAppointment = {appointment ->
                         canceledAppointment = appointment
@@ -72,7 +72,7 @@ class ConfirmCancelPopupKtTest{
         val keepAppointmentLabel = composeTestRule.activity.getString(R.string.keep_appointment)
         val keepAppointmentButton = composeTestRule.onNodeWithText(keepAppointmentLabel).assertIsDisplayed().assertHasClickAction()
 
-        val cancelAppointmentLabel = composeTestRule.activity.getString(R.string.cancel_appointment)
+        val cancelAppointmentLabel = composeTestRule.activity.getString(R.string.delete_appointment)
         val cancelAppointmentButton = composeTestRule.onNodeWithText(cancelAppointmentLabel).assertIsDisplayed().assertHasClickAction()
 
         cancelAppointmentButton.performClick()
@@ -87,7 +87,7 @@ class ConfirmCancelPopupKtTest{
         val keepAppointmentLabel = composeTestRule.activity.getString(R.string.keep_appointment)
         val keepAppointmentButton = composeTestRule.onNodeWithText(keepAppointmentLabel).assertIsDisplayed().assertHasClickAction()
 
-        val cancelAppointmentLabel = composeTestRule.activity.getString(R.string.cancel_appointment)
+        val cancelAppointmentLabel = composeTestRule.activity.getString(R.string.delete_appointment)
         val cancelAppointmentButton = composeTestRule.onNodeWithText(cancelAppointmentLabel).assertIsDisplayed().assertHasClickAction()
 
         keepAppointmentButton.performClick()

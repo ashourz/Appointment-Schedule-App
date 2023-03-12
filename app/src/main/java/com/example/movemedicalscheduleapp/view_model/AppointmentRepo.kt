@@ -78,17 +78,17 @@ class AppointmentRepo(context: Context) : DatabaseMutex {
             databaseWriteMutex().withLock {
                 val deleteCount = appointmentDao.deleteAppointment(appointment)
                 if(deleteCount < 1){
-                    snackbarMessageFlow.emit("Appointment Cancellation Failed")
+                    snackbarMessageFlow.emit("Appointment Deletion Failed")
                 }else{
-                    snackbarMessageFlow.emit("Appointment Canceled")
+                    snackbarMessageFlow.emit("Appointment Deleted")
                 }
                 return deleteCount
             }
         } catch (e: SQLiteConstraintException) {
-            snackbarMessageFlow.emit("Database Operation Failed During Cancellation")
+            snackbarMessageFlow.emit("Database Operation Failed During Deletion")
             return -1
         } catch (e: Exception) {
-            snackbarMessageFlow.emit("An Unknown Error Has Occurred During Cancellation")
+            snackbarMessageFlow.emit("An Unknown Error Has Occurred During Deletion")
             return -1
         }
     }

@@ -82,13 +82,13 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * Cancel Appointment States and Operations
      * */
-    //Mutable state of Appointment selected to be deleted for displaying it to ConfirmCancelPopup
-    private var _cancelAppointment: MutableStateFlow<Appointment?> = MutableStateFlow(null)
-    // Holds state of Appointment selected to be deleted for displaying it to ConfirmCancelPopup
-    val cancelAppointment: StateFlow<Appointment?> = _cancelAppointment.asStateFlow()
-    //Updates state of Appointment selected to be deleted for displaying it to ConfirmCancelPopup
+    //Mutable state of Appointment selected to be deleted for displaying it to ConfirmDeletePopup
+    private var _deleteAppointment: MutableStateFlow<Appointment?> = MutableStateFlow(null)
+    // Holds state of Appointment selected to be deleted for displaying it to ConfirmDeletePopup
+    val deleteAppointment: StateFlow<Appointment?> = _deleteAppointment.asStateFlow()
+    //Updates state of Appointment selected to be deleted for displaying it to ConfirmDeletePopup
     fun updateCancelAppointment(appointment: Appointment?) {
-        _cancelAppointment.value = appointment
+        _deleteAppointment.value = appointment
     }
 
     /**

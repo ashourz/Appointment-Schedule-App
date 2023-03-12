@@ -32,15 +32,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.movemedicalscheduleapp.R
 import com.example.movemedicalscheduleapp.data.entity.Appointment
-import com.example.movemedicalscheduleapp.data.entity.ApptLocation
 import com.example.movemedicalscheduleapp.extensions.getLocationDeclarationString
 import com.example.movemedicalscheduleapp.extensions.getTimeSpanString
-import java.time.Duration
-import java.time.LocalDateTime
 
 @Composable
 fun AppointmentCard(
@@ -49,7 +45,7 @@ fun AppointmentCard(
     expanded: Boolean,
     onExpandAppointmentCard: () -> Unit,
     onUpdateAppointment: (Appointment) -> Unit,
-    onCancelAppointment: (Appointment) -> Unit
+    onDeleteAppointment: (Appointment) -> Unit
 ) {
     val localContext = LocalContext.current
     Column(
@@ -110,9 +106,9 @@ fun AppointmentCard(
                     ) {
                         TextButton(
                             elevation = ButtonDefaults.elevatedButtonElevation(),
-                            onClick = { onCancelAppointment(appointment) }) {
+                            onClick = { onDeleteAppointment(appointment) }) {
                             Text(
-                                text = stringResource(id = R.string.cancel_text),
+                                text = stringResource(id = R.string.delete_text),
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.labelMedium,
                             )
