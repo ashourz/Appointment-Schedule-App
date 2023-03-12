@@ -1,6 +1,7 @@
 package com.example.movemedicalscheduleapp.extensions
 
 import android.content.Context
+import com.example.movemedicalscheduleapp.R
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 
 fun List<Appointment>.toExistingApptErrorMessage(localContext: Context): String {
@@ -10,7 +11,7 @@ fun List<Appointment>.toExistingApptErrorMessage(localContext: Context): String 
                 "Already Exist${if(this.count() == 1){"s"}else{""}} for " +
                 "${firstAppointment.getLocationDeclarationString(localContext)} Within the Selected Time Period."
     }?:{
-        errorMessage = "ERROR GETTING EXISTING APPOINTMENTS MESSAGE"
+        errorMessage = localContext.getString(R.string.failed_existing_appt_error_message)
     }
     return errorMessage
 }

@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.LocalContext
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.movemedicalscheduleapp.extensions.findActivity
@@ -20,16 +21,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         dataViewModel = ViewModelProvider(this)[DataViewModel::class.java]
         lifecycleScope.launch() {
-
             setContent {
-                val activity = LocalContext.current.findActivity() as? AppCompatActivity?
-                activity?.let { nnActivity ->
-                    MoveMedicalScheduleAppTheme {
-                        MainActivityNavHost(
-                            activity = nnActivity,
-                            dataViewModel = dataViewModel
-                        )
-                    }
+                MoveMedicalScheduleAppTheme {
+                    MainActivityNavHost(
+                        fragmentManager = supportFragmentManager,
+                        dataViewModel = dataViewModel
+                    )
                 }
             }
         }

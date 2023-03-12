@@ -4,84 +4,112 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.movemedicalscheduleapp.R
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.extensions.toDisplayFormat
+import com.example.movemedicalscheduleapp.extensions.toEpochMilli
 import com.example.movemedicalscheduleapp.ui.components.bottombars.ScheduleBottomBar
 import com.example.movemedicalscheduleapp.ui.components.cards.AppointmentCard
-import com.example.movemedicalscheduleapp.ui.components.toolbars.ScheduleTopBar
+import com.example.movemedicalscheduleapp.ui.components.toolbars.BasicTopBar
 import com.example.movemedicalscheduleapp.ui.popups.ConfirmCancelPopup
 import com.example.movemedicalscheduleapp.ui.ui_data_class.TempAppointmentProperties
 import com.example.movemedicalscheduleapp.view_model.DataViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ScheduleScaffold(
     dataViewModel: DataViewModel,
-    onNavigateToAddAppointment: () -> Unit = {},
-    onNavigateToUpdateAppointment: () -> Unit = {}
+    onNavigateToAddAppointment: () -> Unit,
+    onNavigateToUpdateAppointment: () -> Unit
 ) {
+    val localContext = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    //region: Schedule Scaffold LazyListState
+    val scheduleScaffoldLazyListState by dataViewModel.scheduleScaffoldLazyListState.collectAsState()
+    //endregion
+
+    //region: Data States
     val pastAppointments by dataViewModel.pastAppointmentStateFlow.collectAsState(initial = emptyList())
     val todayAppointments by dataViewModel.todayAppointmentStateFlow.collectAsState(initial = emptyList())
     val futureAppointments by dataViewModel.futureAppointmentStateFlow.collectAsState(initial = emptyList())
-    val deleteAppointment by dataViewModel.deleteAppointment.collectAsState()
+    val cancelAppointment by dataViewModel.cancelAppointment.collectAsState()
+    val expandedAppointmentCardId by dataViewModel.expandedAppointmentCardIdStateFlow.collectAsState()
+    //endregion
 
-    val lazyListState = rememberLazyListState()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val localContext = LocalContext.current
-    val coroutineScopeMain = rememberCoroutineScope().plus(Dispatchers.Main)
-
+    //region: Snackbar State, Messages and LaunchedEffect
+    val snackbarHostState by dataViewModel.snackbarHostStateFlow.collectAsState()
     val snackbarMessages by dataViewModel.snackbarMessages.collectAsState()
     LaunchedEffect(key1 = snackbarMessages) {
         snackbarMessages?.let { snackBarMessage ->
+            //Show snackbar message on every non-null value
             snackbarHostState.showSnackbar(
                 message = snackBarMessage,
                 duration = SnackbarDuration.Short
             )
         }
     }
+    //endregion 
 
-    val onEditAppointment = { editAppt: Appointment ->
+    /**
+     * onExpandAppointmentCard is executed when any Appointment Card is clicked
+     * Updates expandedAppointmentCardIdStateFlow to extend or close an AppointmentCard, only having one AppointmentCard open at any time.
+     * */
+    val onExpandAppointmentCard = { expandedAppointmentId: Long? ->
+        if (expandedAppointmentCardId != expandedAppointmentId) {
+            dataViewModel.updateExpandedAppointmentCardId(expandedAppointmentId)
+        } else {
+            dataViewModel.updateExpandedAppointmentCardId(null)
+        }
+    }
+
+    /**
+     * onUpdateAppointment is executed when Update button of any Appointment Card is clicked
+     * Updates editingAppointment values of TempAppointmentProperties then navigates to UpdateAppointment screen in UpsertScaffold
+     * */
+    val onUpdateAppointment = { updateAppt: Appointment ->
         dataViewModel.updateTempAppointmentProperties(
             TempAppointmentProperties(
-                editingAppointment = editAppt,
-                title = editAppt.title,
-                date = editAppt.datetime.toLocalDate(),
-                time = editAppt.datetime.toLocalTime(),
-                duration = editAppt.duration,
-                location = editAppt.location,
-                description = editAppt.description
+                editingAppointment = updateAppt,
+                title = updateAppt.title,
+                date = updateAppt.datetime.toLocalDate(),
+                time = updateAppt.datetime.toLocalTime(),
+                duration = updateAppt.duration,
+                location = updateAppt.location,
+                description = updateAppt.description
             )
         )
         onNavigateToUpdateAppointment()
     }
 
+    /**
+     * onCancelAppointment is executed when Update button of any Appointment Card is clicked
+     * Updates updateCancelAppointment state to Appointment selected for cancellation.
+     * This in turn triggers ConfirmCancelPopup to be displayed on non-null updateCancelAppointment values
+     * */
     val onCancelAppointment = { cancelAppt: Appointment ->
-        dataViewModel.updateDeleteAppointment(cancelAppt)
+        dataViewModel.updateCancelAppointment(cancelAppt)
     }
 
     Box() {
         Scaffold(
-            topBar = { ScheduleTopBar("My Appointment Schedule") },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = { BasicTopBar(stringResource(R.string.my_appointment_schedule)) },
             bottomBar = {
                 ScheduleBottomBar(
                     onScrollToToday = {
-                        val todayIndex = pastAppointments.groupBy { it.datetime.toLocalDate() }.map { 1 + it.value.count() }.sum()
-                        if (todayIndex < lazyListState.layoutInfo.totalItemsCount) {
-                            coroutineScopeMain.launch {
-                                lazyListState.scrollToItem(todayIndex, 0)
-                            }
+                        coroutineScope.launch {
+                            dataViewModel.animateScrollScheduleLazyListToToday()
                         }
                     },
                     onAddFabClick = { onNavigateToAddAppointment() }
@@ -90,11 +118,13 @@ fun ScheduleScaffold(
         ) { innerPadding ->
             LazyColumn(
                 modifier = Modifier.padding(innerPadding),
-                state = lazyListState,
+                state = scheduleScaffoldLazyListState,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 pastAppointments.groupBy { it.datetime.toLocalDate() }.forEach { (localDate, appointments) ->
-                    stickyHeader {
+                    stickyHeader(
+                        contentType = localContext.getString(R.string.sticky_header)
+                    ) {
                         Row(
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.secondaryContainer)
@@ -109,11 +139,20 @@ fun ScheduleScaffold(
                         }
                     }
                     appointments.sortedBy { it.datetime }.forEach { appointment ->
-                        item {
+                        item(
+                            contentType = localContext.getString(R.string.appointment_card)
+                        ) {
                             AppointmentCard(
+                                modifier = Modifier.semantics {
+                                    contentDescription = localContext.getString(R.string.appointment_card)
+                                },
                                 appointment = appointment,
-                                onEditAppointment = { editAppt ->
-                                    onEditAppointment(editAppt)
+                                expanded = (expandedAppointmentCardId == appointment.rowid),
+                                onExpandAppointmentCard = {
+                                    onExpandAppointmentCard(appointment.rowid)
+                                },
+                                onUpdateAppointment = { updateAppt ->
+                                    onUpdateAppointment(updateAppt)
                                 },
                                 onCancelAppointment = { cancelAppt ->
                                     onCancelAppointment(cancelAppt)
@@ -121,7 +160,9 @@ fun ScheduleScaffold(
                         }
                     }
                 }
-                stickyHeader {
+                stickyHeader(
+                    contentType = localContext.getString(R.string.sticky_header)
+                ) {
                     Row(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.primaryContainer)
@@ -130,18 +171,27 @@ fun ScheduleScaffold(
                         Text(
                             modifier = Modifier.padding(8.dp),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            text = "Today: ".plus(LocalDate.now().toDisplayFormat(localContext)),
+                            text = stringResource(R.string.today_prefix).plus(LocalDate.now().toDisplayFormat(localContext)),
                             fontWeight = FontWeight.Bold
                         )
                     }
                 }
                 if (todayAppointments.isNotEmpty()) {
                     todayAppointments.sortedBy { it.datetime }.forEach { appointment ->
-                        item {
+                        item(
+                            contentType = localContext.getString(R.string.appointment_card)
+                        ) {
                             AppointmentCard(
+                                modifier = Modifier.semantics {
+                                    contentDescription = localContext.getString(R.string.appointment_card)
+                                },
                                 appointment = appointment,
-                                onEditAppointment = { editAppt ->
-                                    onEditAppointment(editAppt)
+                                expanded = (expandedAppointmentCardId == appointment.rowid),
+                                onExpandAppointmentCard = {
+                                    onExpandAppointmentCard(appointment.rowid)
+                                },
+                                onUpdateAppointment = { updateAppt ->
+                                    onUpdateAppointment(updateAppt)
                                 },
                                 onCancelAppointment = { cancelAppt ->
                                     onCancelAppointment(cancelAppt)
@@ -150,12 +200,13 @@ fun ScheduleScaffold(
                     }
                 } else {
                     item {
-                        Text("No Appointments for Today")
-
+                        Text(stringResource(R.string.no_appointments_for_today))
                     }
                 }
                 futureAppointments.groupBy { it.datetime.toLocalDate() }.forEach { (localDate, appointments) ->
-                    stickyHeader {
+                    stickyHeader(
+                        contentType = localContext.getString(R.string.sticky_header)
+                    ) {
                         Row(
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.secondaryContainer)
@@ -170,11 +221,20 @@ fun ScheduleScaffold(
                         }
                     }
                     appointments.sortedBy { it.datetime }.forEach { appointment ->
-                        item {
+                        item(
+                            contentType = localContext.getString(R.string.appointment_card)
+                        ) {
                             AppointmentCard(
+                                modifier = Modifier.semantics {
+                                    contentDescription = localContext.getString(R.string.appointment_card)
+                                },
                                 appointment = appointment,
-                                onEditAppointment = { editAppt ->
-                                    onEditAppointment(editAppt)
+                                expanded = (expandedAppointmentCardId == appointment.rowid),
+                                onExpandAppointmentCard = {
+                                    onExpandAppointmentCard(appointment.rowid)
+                                },
+                                onUpdateAppointment = { updateAppt ->
+                                    onUpdateAppointment(updateAppt)
                                 },
                                 onCancelAppointment = { cancelAppt ->
                                     onCancelAppointment(cancelAppt)
@@ -182,14 +242,24 @@ fun ScheduleScaffold(
                         }
                     }
                 }
+                item(
+                    contentType = localContext.getString(R.string.spacer)
+                ) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
         }
-        if (deleteAppointment != null) {
+        //Display ConfirmCancelPopup on all null
+        if (cancelAppointment != null) {
             ConfirmCancelPopup(
-                dataViewModel = dataViewModel,
-                appointment = deleteAppointment!!,
+                appointment = cancelAppointment!!,
+                onCancelAppointment = {appointment ->
+                    coroutineScope.launch {
+                        dataViewModel.deleteAppointment(appointment)
+                    }
+                },
                 onClose = {
-                    dataViewModel.updateDeleteAppointment(null)
+                    dataViewModel.updateCancelAppointment(null)
                 })
         }
     }

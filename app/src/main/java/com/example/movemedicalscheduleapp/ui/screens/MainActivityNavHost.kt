@@ -1,17 +1,15 @@
 package com.example.movemedicalscheduleapp.ui.screens
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.movemedicalscheduleapp.view_model.DataViewModel
 
 @Composable
 fun MainActivityNavHost(
-    activity: AppCompatActivity,
+    fragmentManager: FragmentManager,
     dataViewModel: DataViewModel
 ) {
     val navController = rememberNavController()
@@ -39,7 +37,7 @@ fun MainActivityNavHost(
 
         composable(NavDestinationEnum.ADD_APPOINTMENT.destination) {
             UpsertScaffold(
-                activity = activity ,
+                fragmentManager = fragmentManager ,
                 dataViewModel = dataViewModel,
                 update = false,
                 onNavigateAway = {
@@ -52,7 +50,7 @@ fun MainActivityNavHost(
             NavDestinationEnum.EDIT_APPOINTMENT.destination
         ) {
             UpsertScaffold(
-                activity = activity ,
+                fragmentManager = fragmentManager ,
                 dataViewModel = dataViewModel,
                 update = true,
                 onNavigateAway = {

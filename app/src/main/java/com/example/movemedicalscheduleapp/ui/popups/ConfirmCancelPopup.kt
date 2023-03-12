@@ -3,7 +3,9 @@ package com.example.movemedicalscheduleapp.ui.popups
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.example.movemedicalscheduleapp.R
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.view_model.DataViewModel
 import kotlinx.coroutines.Dispatchers
@@ -12,21 +14,21 @@ import kotlinx.coroutines.plus
 
 @Composable
 fun ConfirmCancelPopup(
-    dataViewModel: DataViewModel,
     appointment: Appointment,
+    onCancelAppointment: (Appointment) -> Unit,
     onClose: () -> Unit,
 ) {
-    val coroutineScopeIO = rememberCoroutineScope().plus(Dispatchers.IO)
 
     AlertDialog(
         title = {
             Text(
-                text = "Confirm Cancel Appointment"
+                text = stringResource(R.string.confirm_cancel_appointment)
             )
         },
+
         text = {
             Text(
-                text = "Confirm Cancel Appointment: ${appointment.title}.\nThis Action Cannot Be Undone."
+                text = stringResource(R.string.confirm_cancel_appointment_prefix).plus(appointment.title).plus("\n").plus(stringResource(R.string.this_action_cannot_be_undone))
             )
         },
         dismissButton = {
@@ -34,9 +36,7 @@ fun ConfirmCancelPopup(
                 elevation = ButtonDefaults.elevatedButtonElevation(),
                 onClick = { onClose() }) {
                 Text(
-                    text = "Keep Appointment",
-//                    fontWeight = FontWeight.Bold,
-//                    style = MaterialTheme.typography.labelMedium,
+                    text = stringResource(R.string.keep_appointment)
                 )
             }
         },
@@ -44,15 +44,11 @@ fun ConfirmCancelPopup(
             TextButton(
                 elevation = ButtonDefaults.elevatedButtonElevation(),
                 onClick = {
-                    coroutineScopeIO.launch {
-                        dataViewModel.deleteAppointment(appointment)
-                    }
+                    onCancelAppointment(appointment)
                     onClose()
                 }) {
                 Text(
-                    text = "Cancel Appointment",
-//                    fontWeight = FontWeight.Bold,
-//                    style = MaterialTheme.typography.labelMedium,
+                    text = stringResource(R.string.cancel_appointment),
                 )
             }
         },

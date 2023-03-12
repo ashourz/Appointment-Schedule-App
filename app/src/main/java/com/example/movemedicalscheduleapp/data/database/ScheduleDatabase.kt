@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.movemedicalscheduleapp.R
 import com.example.movemedicalscheduleapp.data.dao.AppointmentDao
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +39,7 @@ abstract class ScheduleDatabase : RoomDatabase() {
                     if (INSTANCE == null) {
                         INSTANCE = Room.databaseBuilder(
                             context.applicationContext,
-                            ScheduleDatabase::class.java, "schedule_database"
+                            ScheduleDatabase::class.java, context.getString(R.string.schedule_database_name)
                         )
                             //Allows room to recreate database if schema is not found
                             .fallbackToDestructiveMigration()

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.MoveMedicalScheduleApp" parent="Theme.MaterialComponents.DayNight.NoActionBar"  />
+
+    <style name="Theme.DatePicker" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <!-- Date Picker Color -->
+        <item name="colorPrimary">@color/purple80</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Date Number Color-->
+        <item name ="colorOnSurface">@color/white</item>
+        <item name ="colorSurface">@color/onSurface</item>
+        <item name ="colorContainer">@color/purpleGrey80</item>
+    </style>
+
+    <style name="Theme.TimePicker" parent="ThemeOverlay.MaterialComponents.TimePicker">
+        <!-- Date Picker Color -->
+        <item name="colorPrimary">@color/purple80</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Date Number Color-->
+        <item name ="colorOnSurface">@color/white</item>
+        <item name ="colorSurface">@color/onSurface</item>
+        <item name ="colorContainer">@color/purpleGrey80</item>
+    </style>
+</resources>

@@ -11,10 +11,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.movemedicalscheduleapp.R
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.data.entity.ApptLocation
 import com.example.movemedicalscheduleapp.extensions.getLocationDeclarationString
@@ -26,10 +30,11 @@ import java.time.LocalDateTime
 fun AppointmentCard(
     modifier: Modifier = Modifier,
     appointment: Appointment,
-    onEditAppointment: (Appointment) -> Unit ,
+    expanded: Boolean,
+    onExpandAppointmentCard: () -> Unit,
+    onUpdateAppointment: (Appointment) -> Unit,
     onCancelAppointment: (Appointment) -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
     val localContext = LocalContext.current
     Column(
         modifier = modifier.padding(horizontal = 8.dp),
@@ -41,9 +46,10 @@ fun AppointmentCard(
                 .clickable(
                     enabled = true,
                     role = Role.Button,
-                    onClick = { expanded = !expanded }
-                ),
-//            shape = MaterialTheme.shapes.medium,
+                    onClick = { onExpandAppointmentCard() }
+                ).semantics {
+                    contentDescription = localContext.getString(R.string.elevated_card)
+                },
             elevation = CardDefaults.elevatedCardElevation()
         ) {
             Column(
@@ -80,7 +86,7 @@ fun AppointmentCard(
                 ) {
                     Text(
                         style = MaterialTheme.typography.labelSmall,
-                        text = "Description: ".plus(appointment.description)
+                        text = stringResource(R.string.description_prefix).plus(appointment.description)
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -90,16 +96,16 @@ fun AppointmentCard(
                             elevation = ButtonDefaults.elevatedButtonElevation(),
                             onClick = { onCancelAppointment(appointment) }) {
                             Text(
-                                text = "Cancel",
+                                text = stringResource(id = R.string.cancel_text),
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.labelMedium,
                             )
                         }
                         TextButton(
                             elevation = ButtonDefaults.elevatedButtonElevation(),
-                            onClick = { onEditAppointment(appointment) }) {
+                            onClick = { onUpdateAppointment(appointment) }) {
                             Text(
-                                text = "Update",
+                                text = stringResource(R.string.update_text),
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.labelMedium,
                             )
@@ -111,19 +117,3 @@ fun AppointmentCard(
     }
 }
 
-@Preview
-@Composable
-fun AppointmentCardPreview() {
-    AppointmentCard(
-        modifier = Modifier,
-        appointment = Appointment(
-            title = "TEST TITLE",
-            location = ApptLocation.MEMPHIS,
-            datetime = LocalDateTime.now(),
-            duration = Duration.ofMinutes(45L),
-            description = "THIS IS A LONG DESC \nTHIS IS A LONG DESC \nTHIS IS A LONG DESC \nTHIS IS A LONG DESC \n"
-        ),
-        onEditAppointment = {},
-        onCancelAppointment = {}
-    )
-}

@@ -10,10 +10,14 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import com.example.movemedicalscheduleapp.R
 import com.example.movemedicalscheduleapp.data.entity.ApptLocation
 import com.example.movemedicalscheduleapp.ui.ComposableConstants
 import com.example.movemedicalscheduleapp.ui.components.icons.SizedIcon
@@ -22,9 +26,8 @@ import com.example.movemedicalscheduleapp.ui.components.icons.SizedIcon
 @Composable
 fun LocationDropDown(
     modifier: Modifier = Modifier,
-    label: String,
     selectedLocation: ApptLocation? = null,
-    onLocationSelected: (ApptLocation) -> Unit = {},
+    onLocationSelected: (ApptLocation) -> Unit,
     errorString: String? = null,
 ) {
     val localContext = LocalContext.current
@@ -32,9 +35,10 @@ fun LocationDropDown(
     val focusRequester = FocusRequester()
     val keyboardController = LocalSoftwareKeyboardController.current
     var expanded by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = expanded) {
-        if (expanded) focusRequester.requestFocus()
-    }
+    //Update focus when AppointmentCard is expanded
+//    LaunchedEffect(key1 = expanded) {
+//        if (expanded) focusRequester.requestFocus()
+//    }
 
     Column() {
         ExposedDropdownMenuBox(
@@ -44,7 +48,6 @@ fun LocationDropDown(
                 expanded = !expanded
             }
         ) {
-
 
             TextField(
                 modifier = modifier
@@ -59,19 +62,20 @@ fun LocationDropDown(
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Start,
-                        text = label
-                    )
+                        text = stringResource(R.string.appointment_location),
+
+                        )
                 },
                 placeholder = {
                     Text(
                         fontStyle = FontStyle.Italic,
-                        text = "Select Appointment Location"
+                        text = stringResource(R.string.select_appointment_location)
                     )
                 },
                 leadingIcon = {
                     SizedIcon(
                         iconDrawable = ComposableConstants.locationIcon,
-                        contentDescription = "Select Appointment Location",
+                        contentDescription = stringResource(R.string.select_appointment_location),
                     )
                 },
                 trailingIcon = {
@@ -81,15 +85,15 @@ fun LocationDropDown(
                         } else {
                             ComposableConstants.downArrowIcon
                         },
-                        contentDescription = "Select Appointment Location",
+                        contentDescription = stringResource(R.string.dropdown_arrow),
                     )
                 },
                 isError = (errorString != null),
             )
             DropdownMenu(
                 modifier = modifier
-                    .focusRequester(focusRequester)
-                    .onFocusChanged { keyboardController?.hide() }
+//                    .focusRequester(focusRequester)
+//                    .onFocusChanged { keyboardController?.hide() }
                     .exposedDropdownSize(),
                 expanded = expanded,
                 onDismissRequest = {
@@ -105,7 +109,7 @@ fun LocationDropDown(
                 }
                 ApptLocation.values().filter { it != ApptLocation.UNKNOWN }.sortedBy { it.getDisplayName(localContext) }.forEach { location ->
                     DropdownMenuItem(
-                        modifier = modifier.fillMaxWidth(),
+                        modifier = modifier.fillMaxWidth().semantics { contentDescription = localContext.getString(R.string.dropdown_menu_item) },
                         text = { Text(modifier = Modifier.padding(start = ComposableConstants.defaultIconSize), text = location.getDisplayName(localContext)) },
                         enabled = true,
                         onClick = {

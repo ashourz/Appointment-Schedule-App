@@ -1,14 +1,18 @@
 package com.example.movemedicalscheduleapp.ui.screens
 
 import androidx.activity.compose.BackHandler
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentManager
+import com.example.movemedicalscheduleapp.R
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.data.entity.ApptLocation
 import com.example.movemedicalscheduleapp.ui.ComposableConstants
@@ -26,7 +30,7 @@ import kotlinx.coroutines.*
 
 @Composable
 fun UpsertScaffold(
-    activity: AppCompatActivity,
+    fragmentManager: FragmentManager,
     dataViewModel: DataViewModel,
     update: Boolean,
     onNavigateAway: () -> Unit
@@ -34,11 +38,26 @@ fun UpsertScaffold(
     val localContext = LocalContext.current
     val coroutineScopeIO = rememberCoroutineScope().plus(Dispatchers.IO)
     val tempAppointmentProperties by dataViewModel.temporaryAppointmentPropertiesFlow.collectAsState()
+
+    //region: Snackbar State, Messages and LaunchedEffect
+    val snackbarHostState by dataViewModel.snackbarHostStateFlow.collectAsState()
+    val snackbarMessages by dataViewModel.snackbarMessages.collectAsState()
+    LaunchedEffect(key1 = snackbarMessages) {
+        snackbarMessages?.let { snackBarMessage ->
+            //Show snackbar message on every non-null value
+            snackbarHostState.showSnackbar(
+                message = snackBarMessage,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
+    //endregion
+
     //region: Error States
     var appointmentTitleError: String? by remember { mutableStateOf(null) }
     var appointmentLocationError: String? by remember { mutableStateOf(null) }
     var appointmentDurationError: String? by remember { mutableStateOf(null) }
-    var updateError: String? by remember { mutableStateOf(null) }
+    var appointmentUpdateError: String? by remember { mutableStateOf(null) }
     //endregion
 
     DisposableEffect(key1 = Unit) {
@@ -56,30 +75,47 @@ fun UpsertScaffold(
     }
 
     ModalScaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         title = if (update) {
-            "Update Appointment"
+            stringResource(R.string.update_appointment)
         } else {
-            "Add Appointment"
+            stringResource(R.string.add_appointment)
         },
         actionButtonText = if (update) {
-            "Update"
+            stringResource(R.string.update_text)
         } else {
-            "Add"
+            stringResource(R.string.add_text)
         },
         dataValidation = {
             addUpdateAppointmentValidation(
                 tempAppointmentProperties = tempAppointmentProperties,
-                updateAppointmentTitleError = { updatedTitleError ->
-                    appointmentTitleError = updatedTitleError
+                updateAppointmentTitleError = { isError ->
+                    if(isError){
+                        appointmentTitleError = localContext.getString(R.string.error_appointment_title_blank)
+                    }else{
+                        appointmentTitleError = null
+                    }
                 },
-                updateAppointmentDurationError = { updatedDurationError ->
-                    appointmentDurationError = updatedDurationError
+                updateAppointmentDurationError = { isError ->
+                    if(isError){
+                        appointmentDurationError = localContext.getString(R.string.error_appointment_duration_zero)
+                    }else{
+                        appointmentDurationError = null
+                    }
                 },
-                updateAppointmentLocationError = { updatedLocationError ->
-                    appointmentLocationError = updatedLocationError
+                updateAppointmentLocationError = { isError ->
+                    if(isError){
+                        appointmentLocationError = localContext.getString(R.string.error_appointment_location_blank)
+                    }else{
+                        appointmentLocationError = null
+                    }
                 },
-                updateUpdateError = { updatedUpdateError ->
-                    updateError = updatedUpdateError
+                updateUpdateError = { isError ->
+                    if(isError){
+                        appointmentUpdateError = localContext.getString(R.string.error_no_appointment_changes_made)
+                    }else{
+                        appointmentUpdateError = null
+                    }
                 }
             )
         },
@@ -116,8 +152,8 @@ fun UpsertScaffold(
         }
     ) {
 
-        if (updateError != null) {
-            ErrorText(errorText = updateError)
+        if (appointmentUpdateError != null) {
+            ErrorText(errorText = appointmentUpdateError)
         }
         if (tempAppointmentProperties.existingApptError != null) {
             ErrorText(errorText = tempAppointmentProperties.existingApptError)
@@ -126,16 +162,16 @@ fun UpsertScaffold(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item(
-                contentType = "EditableTextField"
+                contentType = localContext.getString(R.string.editable_text_field)
             ) {
                 EditableTextField(
                     modifier = Modifier.fillMaxWidth(),
                     textValue = tempAppointmentProperties.title,
-                    label = "Appointment Title",
-                    placeholder = "Enter Appointment Title",
+                    label = stringResource(R.string.appointment_title),
+                    placeholder = stringResource(R.string.enter_appointment_title),
                     maxLines = 1,
                     leadingIconDrawable = ComposableConstants.nameIcon,
-                    leadingIconContentDescription = "Appointment Title",
+                    leadingIconContentDescription = stringResource(R.string.appointment_title),
                     onValueChange = { updatedName ->
                         dataViewModel.updateTempAppointmentProperties(
                             tempAppointmentProperties.copy(
@@ -147,14 +183,14 @@ fun UpsertScaffold(
                 )
             }
             item(
-                contentType = "ComposeDatePicker"
+                contentType = localContext.getString(R.string.compose_date_picker)
             ) {
                 ComposeDatePicker(
-                    activity = activity,
-                    label = "Appointment Date",
-                    placeholder = "Select Appointment Date",
+                    fragmentManager = fragmentManager,
+                    label = stringResource(R.string.appointment_date),
+                    placeholder = stringResource(R.string.select_appointment_Date),
                     leadingIconDrawable = ComposableConstants.calendarIcon,
-                    leadingIconContentDescription = "Appointment Date",
+                    leadingIconContentDescription = stringResource(R.string.appointment_date),
                     selectedDate = tempAppointmentProperties.date,
                     onDateSelected = { updatedDate ->
                         dataViewModel.updateTempAppointmentProperties(
@@ -164,14 +200,14 @@ fun UpsertScaffold(
                 )
             }
             item(
-                contentType = "ComposeTimePicker"
+                contentType = localContext.getString(R.string.compose_time_picker)
             ) {
                 ComposeTimePicker(
-                    activity = activity,
-                    label = "Appointment Time",
-                    placeholder = "Select Appointment Time",
+                    fragmentManager = fragmentManager,
+                    label = stringResource(R.string.appointment_time),
+                    placeholder = stringResource(R.string.select_appointment_time),
                     leadingIconDrawable = ComposableConstants.timeIcon,
-                    leadingIconContentDescription = "Appointment Date",
+                    leadingIconContentDescription = stringResource(R.string.appointment_time),
                     selectedTime = tempAppointmentProperties.time,
                     onTimeSelected = { updatedTime ->
                         dataViewModel.updateTempAppointmentProperties(
@@ -181,14 +217,14 @@ fun UpsertScaffold(
                 )
             }
             item(
-                contentType = "ComposeDurationPicker"
+                contentType = localContext.getString(R.string.compose_duration_picker)
             ) {
                 ComposeDurationPicker(
-                    activity = activity,
-                    label = "Appointment Duration",
-                    placeholder = "Select Appointment Duration",
+                    fragmentManager = fragmentManager,
+                    label = stringResource(R.string.appointment_duration),
+                    placeholder = stringResource(R.string.select_appointment_duration),
                     leadingIconDrawable = ComposableConstants.durationIcon,
-                    leadingIconContentDescription = "Appointment Date",
+                    leadingIconContentDescription = stringResource(R.string.appointment_duration),
                     selectedDuration = tempAppointmentProperties.duration,
                     onDurationSelected = { updatedDuration ->
                         dataViewModel.updateTempAppointmentProperties(
@@ -199,11 +235,10 @@ fun UpsertScaffold(
                 )
             }
             item(
-                contentType = "LocationDropDown"
+                contentType = localContext.getString(R.string.location_drop_down)
             ) {
                 LocationDropDown(
                     modifier = Modifier.fillMaxWidth(),
-                    label = "Appointment Location",
                     selectedLocation = if (tempAppointmentProperties.location == ApptLocation.UNKNOWN) {
                         null
                     } else {
@@ -223,10 +258,10 @@ fun UpsertScaffold(
                 EditableTextField(
                     modifier = Modifier.fillMaxWidth(),
                     textValue = tempAppointmentProperties.description,
-                    label = "Description",
-                    placeholder = "Enter Description",
+                    label = stringResource(R.string.appointment_description),
+                    placeholder = stringResource(R.string.enter_appointment_description),
                     leadingIconDrawable = ComposableConstants.descriptionIcon,
-                    leadingIconContentDescription = "Description",
+                    leadingIconContentDescription = stringResource(R.string.appointment_description),
                     onValueChange = { updatedDesc ->
                         dataViewModel.updateTempAppointmentProperties(
                             tempAppointmentProperties.copy(

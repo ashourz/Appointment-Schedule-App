@@ -28,7 +28,7 @@ fun EditableTextField(
     leadingIconDrawable: Int,
     leadingIconContentDescription: String,
     keyboardType: KeyboardType = KeyboardType.Text,
-    onValueChange: (String) -> Unit = {},
+    onValueChange: (String) -> Unit,
     errorString: String? = null
 ) {
 

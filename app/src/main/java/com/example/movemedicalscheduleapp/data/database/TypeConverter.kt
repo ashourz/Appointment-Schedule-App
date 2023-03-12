@@ -30,7 +30,7 @@ class TypeConverter {
 
     @TypeConverter
     fun durationToLong(duration: Duration?): Long? {
-        return duration?.let{it.seconds}
+        return duration?.seconds
     }
 
     @TypeConverter

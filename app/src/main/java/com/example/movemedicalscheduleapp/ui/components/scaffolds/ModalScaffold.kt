@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,9 +25,11 @@ fun ModalScaffold(
     overlapValidation: () -> Boolean,
     onActionButtonClick: () -> Unit,
     onCancelButtonClick: () -> Unit,
+    snackbarHost: @Composable () -> Unit = {},
     content: @Composable (ColumnScope) -> Unit
 ) {
     Scaffold(
+        snackbarHost = snackbarHost,
         topBar = { BasicTopBar(title) },
         bottomBar = {
             ModalBottomBar(

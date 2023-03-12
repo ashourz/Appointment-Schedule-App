@@ -13,7 +13,7 @@ import com.example.movemedicalscheduleapp.ui.ComposableConstants
 fun SizedIcon(
     modifier: Modifier = Modifier,
     iconDrawable: Int,
-    contentDescription: String? = null,
+    contentDescription: String,
 ) {
     Icon(
         modifier = modifier.size (ComposableConstants.defaultIconSize),

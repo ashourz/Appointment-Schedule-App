@@ -1,10 +1,65 @@
 <resources>
     <string name="app_name">MoveMedical Schedule App</string>
-    <string name="appt_location_san_diego">San Diego</string>
-    <string name="appt_location_st_george">St. George</string>
-    <string name="appt_location_park_city">Park City</string>
+    <!-- Composable Types -->
+    <string name="appointment_card">AppointmentCard</string>
+    <string name="compose_date_picker">ComposeDatePicker</string>
+    <string name="compose_duration_picker">ComposeDurationPicker</string>
+    <string name="compose_time_picker">ComposeTimePicker</string>
+    <string name="dropdown_menu_item">DropdownMenuItem</string>
+    <string name="editable_text_field">EditableTextField</string>
+    <string name="elevated_card">ElevatedCard</string>
+    <string name="location_drop_down">LocationDropDown</string>
+    <string name="spacer">Spacer</string>
+    <string name="sticky_header">StickyHeader</string>
+    <!-- Fragment Tags -->
+    <string name="date_picker_tag">DATE_PICKER</string>
+    <string name="time_picker_tag">TIME_PICKER</string>
+    <string name="duration_picker_tag">DURATION_PICKER</string>
+    <!-- Appointment Locations -->
     <string name="appt_location_dallas">Dallas</string>
     <string name="appt_location_memphis">Memphis</string>
     <string name="appt_location_orlando">Orlando</string>
+    <string name="appt_location_park_city">Park City</string>
+    <string name="appt_location_san_diego">San Diego</string>
+    <string name="appt_location_st_george">St. George</string>
     <string name="appt_location_unknown">Unknown Location</string>
+
+    <!-- Errors -->
+    <string name="error_appointment_duration_zero">Appointment Duration Must Be Greater Than 0 Minutes</string>
+    <string name="error_appointment_location_blank">Appointment Location Cannot Be Blank</string>
+    <string name="error_appointment_title_blank">Appointment Title Cannot Be Blank</string>
+    <string name="error_no_appointment_changes_made">No Changes Have Been Made</string>
+    <!-- Others -->
+    <string name="add_appointment">Add Appointment</string>
+    <string name="add_text">Add</string>
+    <string name="appointment_date">Date</string>
+    <string name="appointment_description">Description</string>
+    <string name="appointment_duration">Duration</string>
+    <string name="appointment_location">Appointment Location</string>
+    <string name="appointment_time">Time</string>
+    <string name="appointment_title">Title</string>
+    <string name="cancel_appointment">Cancel Appointment</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="confirm_cancel_appointment">Confirm Cancel Appointment</string>
+    <string name="confirm_cancel_appointment_prefix">Confirm Cancel Appointment:&#160;</string>
+    <string name="description_prefix">Description:&#160;</string>
+    <string name="dropdown_arrow">Dropdown Arrow</string>
+    <string name="enter_appointment_description">Enter Description</string>
+    <string name="enter_appointment_title">Enter Title</string>
+    <string name="failed_existing_appt_error_message">An Error Occurred When Getting Existing Appointment Validation Message</string>
+    <string name="keep_appointment">Keep Appointment</string>
+    <string name="my_appointment_schedule">My Appointment Schedule</string>
+    <string name="no_appointments_for_today">No Appointments for Today</string>
+    <string name="schedule_database_name">schedule_database</string>
+    <string name="scroll_to_today">Scroll to Today</string>
+    <string name="select_appointment_Date">Select Date</string>
+    <string name="select_appointment_duration">Select Duration</string>
+    <string name="select_appointment_location">Select Appointment Location</string>
+    <string name="select_appointment_time">Select Time</string>
+    <string name="this_action_cannot_be_undone">This Action Cannot Be Undone.</string>
+    <string name="today_prefix">Today:&#160;</string>
+    <string name="today_text">Today</string>
+    <string name="update_appointment">Update Appointment</string>
+    <string name="update_text">Update</string>
+
 </resources>

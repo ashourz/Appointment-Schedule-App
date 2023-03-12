@@ -1,6 +1,5 @@
 package com.example.movemedicalscheduleapp.ui.components.datetime
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -19,6 +18,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.fragment.app.FragmentManager
 import com.example.movemedicalscheduleapp.extensions.toDisplayFormat
 import com.example.movemedicalscheduleapp.ui.components.icons.SizedIcon
 import java.time.LocalDate
@@ -27,16 +27,17 @@ import java.time.LocalDateTime
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ComposeDatePicker(
-    activity: AppCompatActivity,
+    fragmentManager: FragmentManager,
     modifier: Modifier = Modifier,
     label: String,
     placeholder: String,
     leadingIconDrawable: Int,
     leadingIconContentDescription: String,
     selectedDate: LocalDate? = null,
-    onDateSelected: (datePicked: LocalDate) -> Unit = {},
+    onDateSelected: (datePicked: LocalDate) -> Unit,
     isError: Boolean = false,
 ) {
+    val localContext = LocalContext.current
     val focusRequester = FocusRequester()
     val keyboardController = LocalSoftwareKeyboardController.current
     var lastButtonClickEvent by remember { mutableStateOf<LocalDateTime?>(null) }
@@ -48,7 +49,7 @@ fun ComposeDatePicker(
                 .onFocusChanged { keyboardController?.hide() }
                 .fillMaxWidth(),
             readOnly = true,
-            value = selectedDate?.let { selectedDate.toDisplayFormat(LocalContext.current) } ?: "",
+            value = selectedDate?.let { selectedDate.toDisplayFormat(localContext) } ?: "",
             onValueChange = {},
             label = {
                 Text(
@@ -69,7 +70,7 @@ fun ComposeDatePicker(
             isError = isError,
         )
         Surface(modifier = modifier
-            .background(androidx.compose.ui.graphics.Color.Transparent,TextFieldDefaults.filledShape )
+            .background(androidx.compose.ui.graphics.Color.Transparent, TextFieldDefaults.filledShape)
             .alpha(0f)
             .defaultMinSize(
                 minHeight = TextFieldDefaults.MinHeight
@@ -84,11 +85,10 @@ fun ComposeDatePicker(
                         onButtonClick = {
                             focusRequester.requestFocus()
                             showDatePicker(
-                                activity = activity,
-                                title = label,
-                                openDate = selectedDate?:LocalDate.now(),
-                                onPositiveButtonClick = onDateSelected,
-                                onDismissOrCancelClick = {}
+                                context = localContext,
+                                fragmentManager = fragmentManager,                                title = label,
+                                openDate = selectedDate ?: LocalDate.now(),
+                                onPositiveButtonClick = onDateSelected
                             )
                         }
                     )

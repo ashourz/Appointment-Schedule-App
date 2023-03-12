@@ -14,6 +14,5 @@ data class TempAppointmentProperties(
     val duration: Duration = Duration.ZERO,
     val location: ApptLocation = ApptLocation.UNKNOWN,
     val description: String? = null,
-    val existingApptError: String? = null,
-    val successfulUpsert: Boolean = false
+    val existingApptError: String? = null
 )

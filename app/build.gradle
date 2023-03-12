@@ -55,6 +55,11 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -73,8 +78,6 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     // Jetpack Room - Test helpers
     testImplementation("androidx.room:room-testing:$room_version")
-//    implementation 'android.arch.persistence.room:runtime:1.1.1'
-//    annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
     //endregion
 
     //region: Jetpack Compose Navigation
@@ -88,6 +91,7 @@ dependencies {
     androidTestImplementation composeBom
     implementation 'androidx.compose.material3:material3'
     implementation 'com.google.android.material:material:1.8.0'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
     // Android Studio Preview support
     implementation 'androidx.compose.ui:ui-tooling-preview'
@@ -97,6 +101,7 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
     // Jetpack Compose - Integration with activities
     implementation 'androidx.activity:activity-compose:1.6.1'
+
     // Jetpack Compose - Integration with ViewModels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0'
     // Jetpack Compose - Integration with LiveData
@@ -108,10 +113,10 @@ dependencies {
     testImplementation "com.google.truth:truth:1.1.2"
     androidTestImplementation "com.google.truth:truth:1.1.2"
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    //Mockito
-//    testImplementation 'org.mockito:mockito-core:3.10.0'
-//    androidTestImplementation 'org.mockito:mockito-android:3.10.0'
 
+//    debugImplementation "androidx.fragment:fragment-testing:1.3.0-alpha08"
+//        debugImplementation("androidx.test:core:1.5.0")
+//    debugImplementation "androidx.fragment:fragment-testing:1.4.0"
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
     //endregion

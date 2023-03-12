@@ -6,29 +6,29 @@ import java.time.Duration
 
 fun addUpdateAppointmentValidation(
     tempAppointmentProperties: TempAppointmentProperties,
-    updateAppointmentTitleError: (String?) -> Unit,
-    updateAppointmentDurationError: (String?) -> Unit,
-    updateAppointmentLocationError: (String?) -> Unit,
-    updateUpdateError: (String?) -> Unit
+    updateAppointmentTitleError: (Boolean) -> Unit,
+    updateAppointmentDurationError: (Boolean) -> Unit,
+    updateAppointmentLocationError: (Boolean) -> Unit,
+    updateUpdateError: (Boolean) -> Unit
 
 ): Boolean {
     var validationBoolean = true
     //region: Reset Error States
-    updateAppointmentTitleError(null)
-    updateAppointmentDurationError(null)
-    updateAppointmentLocationError(null)
-    updateUpdateError(null)
+    updateAppointmentTitleError(false)
+    updateAppointmentDurationError(false)
+    updateAppointmentLocationError(false)
+    updateUpdateError(false)
     //endregion
     if(tempAppointmentProperties.title.isNullOrBlank()){
-        updateAppointmentTitleError("Appointment Title Cannot Be Blank")
+        updateAppointmentTitleError(true)
        validationBoolean = false
     }
     if (tempAppointmentProperties.duration == Duration.ZERO) {
-        updateAppointmentDurationError("Appointment Duration Must Be Greater Than 0 Minutes")
+        updateAppointmentDurationError(true)
         validationBoolean = false
     }
     if (tempAppointmentProperties.location == ApptLocation.UNKNOWN) {
-        updateAppointmentLocationError("Appointment Location Cannot Be Blank")
+        updateAppointmentLocationError(true)
         validationBoolean = false
     }
     if (tempAppointmentProperties.editingAppointment != null &&
@@ -39,7 +39,7 @@ fun addUpdateAppointmentValidation(
         tempAppointmentProperties.location ==    tempAppointmentProperties.editingAppointment.location &&
         tempAppointmentProperties.description ==            tempAppointmentProperties.editingAppointment.description
     ) {
-        updateUpdateError("No Changes Have Been Made")
+        updateUpdateError(true)
         validationBoolean = false
     }
     //Validate For No Errors

@@ -1,5 +1,7 @@
 package com.example.movemedicalscheduleapp.ui.components.validation
 
+import android.app.Application
+import com.example.movemedicalscheduleapp.R
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.data.entity.ApptLocation
 import com.example.movemedicalscheduleapp.ui.ui_data_class.TempAppointmentProperties
@@ -12,31 +14,6 @@ import java.time.LocalDateTime
 
 @RunWith(JUnit4::class)
 class AddUpdateAppointmentValidationKtTest {
-    companion object {
-        init {}
-
-        @BeforeClass
-        @JvmStatic
-        fun beforeClass() {
-            println("BEFORE CLASS")
-        }
-
-        @AfterClass
-        @JvmStatic
-        fun afterClass() {
-            println("AFTER CLASS")
-        }
-    }
-
-    @Before
-    fun before() {
-        println("BEFORE")
-    }
-
-    @After
-    fun after() {
-        println("AFTER")
-    }
 
     @Test
     fun invalidDataFailure(){
@@ -47,9 +24,24 @@ class AddUpdateAppointmentValidationKtTest {
 
         addUpdateAppointmentValidation(
             tempAppointmentProperties = tempAppointmentProperties,
-            updateAppointmentTitleError = {titleError = it},
-            updateAppointmentDurationError = {durationError = it},
-            updateAppointmentLocationError = {locationError = it},
+            updateAppointmentTitleError = {isError ->
+                if(isError){
+                    titleError = "error"
+                }else{
+                    titleError = null
+                }},
+            updateAppointmentDurationError = {isError ->
+                if(isError){
+                    durationError = "error"
+                }else{
+                    durationError = null
+                }},
+            updateAppointmentLocationError = {isError ->
+                if(isError){
+                    locationError = "error"
+                }else{
+                    locationError = null
+                }},
             updateUpdateError = {})
         assertThat(
             titleError != null &&
@@ -84,10 +76,31 @@ class AddUpdateAppointmentValidationKtTest {
 
         addUpdateAppointmentValidation(
             tempAppointmentProperties = tempAppointmentProperties,
-            updateAppointmentTitleError = {titleError = it},
-            updateAppointmentDurationError = {durationError = it},
-            updateAppointmentLocationError = {locationError = it},
-            updateUpdateError = {updateError = it})
+            updateAppointmentTitleError = {isError ->
+                if(isError){
+                    titleError = "error"
+                }else{
+                    titleError = null
+                }},
+            updateAppointmentDurationError = {isError ->
+                if(isError){
+                    durationError = "error"
+                }else{
+                    durationError = null
+                }},
+            updateAppointmentLocationError = {isError ->
+                if(isError){
+                    locationError = "error"
+                }else{
+                    locationError = null
+                }},
+            updateUpdateError = {isError ->
+                if(isError){
+                    updateError = "error"
+                }else{
+                    updateError = null
+                }}
+        )
         assertThat(
             titleError == null &&
             durationError == null &&
@@ -122,7 +135,12 @@ class AddUpdateAppointmentValidationKtTest {
             updateAppointmentTitleError = {},
             updateAppointmentDurationError = {},
             updateAppointmentLocationError = {},
-            updateUpdateError = {updateError = it})
+            updateUpdateError = {isError ->
+                if(isError){
+                    updateError = "error"
+                }else{
+                    updateError = null
+                }})
         assertThat(
             updateError != null
         ).isTrue()
