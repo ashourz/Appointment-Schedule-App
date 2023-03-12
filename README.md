@@ -55,4 +55,4 @@ Create appointments with a date, time, location, and description.
   <img src="https://user-images.githubusercontent.com/39238415/224545972-f8c16400-1f77-41ee-b0a9-43453f796935.png" width="160" />
 </p>
 
-**Appointment card data may not reflect actual validation standards enforced by the application
+**Screenshot appointment card data may not reflect actual validation standards enforced by the application
