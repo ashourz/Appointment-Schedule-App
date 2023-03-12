@@ -12,8 +12,12 @@ import com.example.movemedicalscheduleapp.ui.ui_data_class.TempAppointmentProper
 import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -40,7 +44,16 @@ class DataViewModelTest: TestCase() {
         localContext = application.applicationContext
     }
 
-
+    @After
+    public override fun tearDown() {
+        super.tearDown()
+        //Cancel All Appointments
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                dataViewModel.deleteAll()
+            }
+        }
+    }
     @Test
     fun updateTempAppointmentPropertiesValues() = kotlinx.coroutines.test.runTest{
         val tempDateTime = LocalDateTime.now().plusDays(1L)
@@ -495,5 +508,22 @@ class DataViewModelTest: TestCase() {
         Truth.assertThat(resultList2.none {
             it == correctedAppt1
         }).isTrue()
+    }
+
+    @Test
+    fun deleteAll() = kotlinx.coroutines.test.runTest {
+        val sanitizedDateTime = typeConverter.longToLocalDateTime(
+            typeConverter.localDateTimeToLong(LocalDateTime.now())
+        )!!
+        val appt = Appointment(
+            title = "Test Title",
+            datetime = sanitizedDateTime,
+            location = ApptLocation.DALLAS,
+            duration = Duration.ofMinutes(45L),
+            description = "Test Description"
+        )
+        dataViewModel.deleteAll()
+        val resultList2 = dataViewModel.todayAppointmentStateFlow.first()
+        Truth.assertThat(resultList2.none { it == appt }).isTrue()
     }
 }

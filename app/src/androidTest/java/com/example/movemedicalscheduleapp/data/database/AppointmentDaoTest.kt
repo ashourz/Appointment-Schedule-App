@@ -44,6 +44,7 @@ class AppointmentDaoTest: TestCase() {
     @After
     @Throws(IOException::class)
     public override fun tearDown() {
+        dao.deleteAll()
         db.close()
     }
 
@@ -139,6 +140,23 @@ class AppointmentDaoTest: TestCase() {
         )
         val deleteCount = dao.deleteAppointment(appt)
         assertThat(deleteCount == 0).isTrue()
+        val resultList2 = dao.getAllTodayAppointments().first()
+        assertThat(resultList2.none { it == appt }).isTrue()
+    }
+
+    @Test
+    fun deleteAll() = runTest {
+        val sanitizedDateTime = typeConverter.longToLocalDateTime(
+            typeConverter.localDateTimeToLong(LocalDateTime.now())
+        )!!
+        val appt = Appointment(
+            title = "Test Title",
+            datetime = sanitizedDateTime,
+            location = ApptLocation.DALLAS,
+            duration = Duration.ofMinutes(45L),
+            description = "Test Description"
+        )
+        val deleteCount = dao.deleteAll()
         val resultList2 = dao.getAllTodayAppointments().first()
         assertThat(resultList2.none { it == appt }).isTrue()
     }

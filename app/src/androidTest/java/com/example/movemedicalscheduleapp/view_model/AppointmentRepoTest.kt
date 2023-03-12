@@ -10,8 +10,11 @@ import com.example.movemedicalscheduleapp.data.entity.ApptLocation
 import com.example.movemedicalscheduleapp.extensions.toSQLLong
 import com.google.common.truth.Truth
 import junit.framework.TestCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -41,7 +44,13 @@ class AppointmentRepoTest: TestCase() {
     @After
     @Throws(IOException::class)
     public override fun tearDown() {
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                repo.deleteAll()
+            }
+        }
     }
+
 
     @Test
     fun upsertNewRead() = kotlinx.coroutines.test.runTest {
@@ -135,6 +144,23 @@ class AppointmentRepoTest: TestCase() {
         )
         val deleteCount = repo.deleteAppointment(appt)
         Truth.assertThat(deleteCount == 0).isTrue()
+        val resultList2 = repo.todayAppointmentFlow.first()
+        Truth.assertThat(resultList2.none { it == appt }).isTrue()
+    }
+
+    @Test
+    fun deleteAll() = kotlinx.coroutines.test.runTest {
+        val sanitizedDateTime = typeConverter.longToLocalDateTime(
+            typeConverter.localDateTimeToLong(LocalDateTime.now())
+        )!!
+        val appt = Appointment(
+            title = "Test Title",
+            datetime = sanitizedDateTime,
+            location = ApptLocation.DALLAS,
+            duration = Duration.ofMinutes(45L),
+            description = "Test Description"
+        )
+        repo.deleteAll()
         val resultList2 = repo.todayAppointmentFlow.first()
         Truth.assertThat(resultList2.none { it == appt }).isTrue()
     }

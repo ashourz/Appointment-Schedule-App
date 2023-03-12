@@ -46,4 +46,9 @@ interface AppointmentDao {
             (datetime <= :apptEndSQLLong AND (datetime + duration) >= :apptEndSQLLong) OR
             (datetime <= :apptStartSQLLong AND (datetime + duration) >= :apptEndSQLLong))""")
     fun getOverlappingAppointments(locationInt: Int, apptStartSQLLong: Long, apptEndSQLLong: Long): List<Appointment>
+
+    @Transaction
+    @Query
+    ("DELETE FROM appointment_table")
+    fun deleteAll()
 }

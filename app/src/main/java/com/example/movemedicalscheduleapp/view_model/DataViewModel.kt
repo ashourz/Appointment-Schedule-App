@@ -132,5 +132,11 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
             return overlappingAppointmentList
         }
     }
+
+    suspend fun deleteAll(){
+        withContext(dataViewModelScope.coroutineContext) {
+            appointmentRepo.deleteAll()
+        }
+    }
     //endregion
 }

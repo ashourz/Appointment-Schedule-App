@@ -92,8 +92,6 @@ fun LocationDropDown(
             )
             DropdownMenu(
                 modifier = modifier
-//                    .focusRequester(focusRequester)
-//                    .onFocusChanged { keyboardController?.hide() }
                     .exposedDropdownSize(),
                 expanded = expanded,
                 onDismissRequest = {

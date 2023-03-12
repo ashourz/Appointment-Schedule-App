@@ -96,4 +96,20 @@ class AppointmentRepo(context: Context) : DatabaseMutex {
             return emptyList()
         }
     }
+
+    /**
+     * Returns list of overlapping
+     * */
+    suspend fun deleteAll() {
+        try {
+            databaseWriteMutex().withLock {
+                return appointmentDao.deleteAll()
+            }
+        } catch (e: SQLiteConstraintException) {
+            snackbarMessageFlow.value = "Database Operation Failed During Deletion"
+        } catch (e: Exception) {
+            snackbarMessageFlow.value = "An Unknown Error Has Occurred During Deletion"
+        }
+    }
+
 }

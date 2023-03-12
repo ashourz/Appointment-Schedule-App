@@ -1,8 +1,10 @@
 package com.example.movemedicalscheduleapp.ui.screens
 
+import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -15,9 +17,13 @@ import com.example.movemedicalscheduleapp.data.entity.ApptLocation
 import com.example.movemedicalscheduleapp.extensions.toDisplayFormat
 import com.example.movemedicalscheduleapp.view_model.DataViewModel
 import junit.framework.TestCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -58,21 +64,25 @@ class UpsertScaffoldKtTest : TestCase() {
         dataViewModel = DataViewModel(activity.application)
         //Cancel All Appointments
         runBlocking {
-            dataViewModel.pastAppointmentStateFlow.first().forEach {
-                dataViewModel.deleteAppointment(it)
-            }
-            dataViewModel.todayAppointmentStateFlow.first().forEach {
-                dataViewModel.deleteAppointment(it)
-            }
-            dataViewModel.futureAppointmentStateFlow.first().forEach {
-                dataViewModel.deleteAppointment(it)
+            withContext(Dispatchers.IO) {
+                dataViewModel.deleteAll()
             }
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @After
+    public override fun tearDown() {
+        super.tearDown()
+        //Cancel All Appointments
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                dataViewModel.deleteAll()
+            }
+        }
+    }
+
     @Test
-    fun canNavigateToInsertScaffold() = kotlinx.coroutines.test.runTest{
+    fun canNavigateToInsertScaffold() = runTest{
         //Assert Top Bar Displayed
         val topBarTitle = activity.getString(R.string.my_appointment_schedule)
         val titleTextBox = composeTestRule.onNodeWithText(topBarTitle).assertIsDisplayed()
@@ -88,7 +98,7 @@ class UpsertScaffoldKtTest : TestCase() {
     }
 
     @Test
-    fun defaultValuesInTextFields() =  kotlinx.coroutines.test.runTest {
+    fun defaultValuesInTextFields() =  runTest {
         //Navigate To Insert Scaffold
         canNavigateToInsertScaffold()
         val localContext = composeTestRule.activity.applicationContext
@@ -116,7 +126,7 @@ class UpsertScaffoldKtTest : TestCase() {
     }
 
     @Test
-    fun errorMessagesOnAddInvalidValues() =  kotlinx.coroutines.test.runTest {
+    fun errorMessagesOnAddInvalidValues() =  runTest {
         //Navigate To Insert Scaffold
         canNavigateToInsertScaffold()
         //Assert Bottom Bar button Present
@@ -136,13 +146,13 @@ class UpsertScaffoldKtTest : TestCase() {
     }
 
     @Test
-    fun navigateUpdateTitleValue() =  kotlinx.coroutines.test.runTest {
+    fun navigateUpdateTitleValue() =  runTest {
         //Navigate To Insert Scaffold
         canNavigateToInsertScaffold()
         updateTitleValue()
     }
 
-    private fun updateTitleValue() =  kotlinx.coroutines.test.runTest {
+    private fun updateTitleValue() =  runTest {
 
         val titleBoxLabel = activity.getString(R.string.appointment_title)
         val titleClickableField = composeTestRule.onNodeWithText(titleBoxLabel).assertIsDisplayed().assertHasClickAction()
@@ -151,13 +161,13 @@ class UpsertScaffoldKtTest : TestCase() {
     }
 
     @Test
-    fun navigateUpdateDateValue() =  kotlinx.coroutines.test.runTest {
+    fun navigateUpdateDateValue() =  runTest {
         //Navigate To Insert Scaffold
         canNavigateToInsertScaffold()
         updateDateValue()
     }
 
-    private fun updateDateValue() =  kotlinx.coroutines.test.runTest {
+    private fun updateDateValue() =  runTest {
         val localContext = composeTestRule.activity.applicationContext
 
         val dateBoxLabel = activity.getString(R.string.appointment_date)
@@ -172,17 +182,18 @@ class UpsertScaffoldKtTest : TestCase() {
                     "${selectedDate.dayOfMonth}").also{ hasClickAction()}).check(matches(isDisplayed())).perform(click())
         //Click on OK button
         onView(withText("OK").also{hasClickAction()}).check(matches(isDisplayed())).perform(click())
-        dateClickableField.assertTextContains(selectedDate.toDisplayFormat(localContext))
+        val correctedDateValue = selectedDate.toDisplayFormat(localContext)
+        dateClickableField.assertTextContains(correctedDateValue)
     }
 
     @Test
-    fun navigateUpdateTimeValue() =  kotlinx.coroutines.test.runTest {
+    fun navigateUpdateTimeValue() =  runTest {
         //Navigate To Insert Scaffold
         canNavigateToInsertScaffold()
         updateTimeValue()
     }
 
-    private fun updateTimeValue() =  kotlinx.coroutines.test.runTest {
+    private fun updateTimeValue() =  runTest {
         val localContext = composeTestRule.activity.applicationContext
         val initialTime = initialDateTime.toLocalTime()
         val timeBoxLabel = activity.getString(R.string.appointment_time)
@@ -196,17 +207,18 @@ class UpsertScaffoldKtTest : TestCase() {
         onView(withId(2131230955).also{hasClickAction()}).check(matches(isDisplayed())).perform(click())
         //Confirm Time Update in Add Scaffold
         val h24SelectedHour = if(initialTime.hour>12){selectedHour + 12}else{selectedHour}
-        dateClickableField.assertTextContains(value = initialTime.withHour(h24SelectedHour).toDisplayFormat(localContext), substring = true)
+        val updatedTimeValue = initialTime.withHour(h24SelectedHour).toDisplayFormat(localContext)
+        dateClickableField.assertTextContains(updatedTimeValue)
     }
 
     @Test
-    fun navigateUpdateDurationValue() =  kotlinx.coroutines.test.runTest {
+    fun navigateUpdateDurationValue() =  runTest {
         //Navigate To Insert Scaffold
         canNavigateToInsertScaffold()
         updateDurationValue()
     }
 
-    private fun updateDurationValue() =  kotlinx.coroutines.test.runTest {
+    private fun updateDurationValue() =  runTest {
         val durationBoxLabel = activity.getString(R.string.appointment_duration)
         val durationClickableField = composeTestRule.onNodeWithText(durationBoxLabel).assertIsDisplayed().assertHasClickAction()
         durationClickableField.performClick()
@@ -222,7 +234,7 @@ class UpsertScaffoldKtTest : TestCase() {
     }
 
     @Test
-    fun navigateUpdateLocationValue() =  kotlinx.coroutines.test.runTest {
+    fun navigateUpdateLocationValue() =  runTest {
         //Navigate To Insert Scaffold
         canNavigateToInsertScaffold()
         updateLocationValue()
@@ -241,7 +253,7 @@ class UpsertScaffoldKtTest : TestCase() {
     }
 
     @Test
-    fun navigateUpdateDescriptionValue() =  kotlinx.coroutines.test.runTest {
+    fun navigateUpdateDescriptionValue() =  runTest {
         //Navigate To Insert Scaffold
         canNavigateToInsertScaffold()
         updateDescriptionValue()
@@ -265,7 +277,7 @@ class UpsertScaffoldKtTest : TestCase() {
     }
 
     @Test
-    fun insertAppointment() =  kotlinx.coroutines.test.runTest {
+    fun insertAppointment() =  runTest {
         //Navigate To Insert Scaffold
         canNavigateToInsertScaffold()
         updateTitleValue()
@@ -280,16 +292,16 @@ class UpsertScaffoldKtTest : TestCase() {
         val addButton = composeTestRule.onNodeWithText(addText).assertIsDisplayed().performClick()
         //Assert Appointment Add
         val appointmentCardContentDescription = activity.getString(R.string.elevated_card)
-        val clickableAppointmentCard = composeTestRule.onNode(hasContentDescription(appointmentCardContentDescription).and(hasText(text = appointment.title, substring = true)))
+        val clickableAppointmentCard = composeTestRule.onNode(hasContentDescription(appointmentCardContentDescription)).also{hasText(text = appointment.title, substring = true)}
             .assertIsDisplayed().assertHasClickAction()
     }
 
     @Test
-    fun noChangesMadeUpdate() =  kotlinx.coroutines.test.runTest {
+    fun noChangesMadeUpdate() =  runTest {
         insertAppointment()
         //Click on Appointment Card
         val appointmentCardContentDescription = activity.getString(R.string.elevated_card)
-        val clickableAppointmentCard = composeTestRule.onNode(hasContentDescription(appointmentCardContentDescription).and(hasText(text = appointment.title, substring = true)))
+        val clickableAppointmentCard = composeTestRule.onNode(hasContentDescription(appointmentCardContentDescription)).also{hasText(text = appointment.title, substring = true)}
             .assertIsDisplayed().assertHasClickAction().performClick()
         //Click on Update Button
         val updateLabel = activity.getString(R.string.update_text)
@@ -304,13 +316,13 @@ class UpsertScaffoldKtTest : TestCase() {
     }
 
     @Test
-    fun updateMadeUpdate() =  kotlinx.coroutines.test.runTest {
+    fun updateMadeUpdate() =  runTest {
         val localContext = composeTestRule.activity.applicationContext
 
         insertAppointment()
         //Click on Appointment Card
         val appointmentCardContentDescription = activity.getString(R.string.elevated_card)
-        val clickableAppointmentCard = composeTestRule.onNode(hasContentDescription(appointmentCardContentDescription).and(hasText(text = appointment.title, substring = true)))
+        val clickableAppointmentCard = composeTestRule.onNode(hasContentDescription(appointmentCardContentDescription)).also{hasText(text = appointment.title, substring = true)}
             .assertIsDisplayed().assertHasClickAction().performClick()
         //Click on Update Button
         val updateLabel = activity.getString(R.string.update_text)
@@ -321,18 +333,19 @@ class UpsertScaffoldKtTest : TestCase() {
         val updateText = activity.getString(R.string.update_text)
         val updateButton = composeTestRule.onNodeWithText(updateText).assertIsDisplayed().performClick()
         //Assert Appointment Update
-        val updatedAppointmentCard = composeTestRule.onNode(hasContentDescription(appointmentCardContentDescription).and(hasText(text = ApptLocation.DALLAS.getDisplayName(localContext), substring = true)))
+        val updatedAppointmentCard = composeTestRule.onNode(hasContentDescription(appointmentCardContentDescription)).also{hasText(text = ApptLocation.DALLAS.getDisplayName(localContext), substring
+        = true)}
             .assertIsDisplayed().assertHasClickAction()
     }
 
     @Test
-    fun updateWithOverlap() =  kotlinx.coroutines.test.runTest {
+    fun updateWithOverlap() =  runTest {
         val localContext = composeTestRule.activity.applicationContext
 
         insertAppointment()
         //Click on Appointment Card
         val appointmentCardContentDescription = activity.getString(R.string.elevated_card)
-        val clickableAppointmentCard = composeTestRule.onNode(hasContentDescription(appointmentCardContentDescription).and(hasText(text = appointment.title, substring = true)))
+        val clickableAppointmentCard = composeTestRule.onNode(hasContentDescription(appointmentCardContentDescription)).also{hasText(text = appointment.title, substring = true)}
             .assertIsDisplayed().assertHasClickAction().performClick()
         //Click on Update Button
         val updateLabel = activity.getString(R.string.update_text)
