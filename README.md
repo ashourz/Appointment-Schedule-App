@@ -1,5 +1,5 @@
 # My Schedule App
-Appointment Scheduling app for Android written in Kotlin
+Personal appointment scheduling app for Android written in Kotlin
 
 # Project Assignment
 Create appointments with a date, time, location, and description. 
