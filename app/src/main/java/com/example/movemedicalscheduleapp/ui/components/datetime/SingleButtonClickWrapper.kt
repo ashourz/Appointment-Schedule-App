@@ -19,6 +19,9 @@ package com.example.movemedicalscheduleapp.ui.components.datetime
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
+/**
+ * Prevents double execution of a button within time period of 2 seconds
+ * */
 fun singleButtonClickWrapper(
     lastButtonClick: LocalDateTime?,
     updateLastButtonClick: (LocalDateTime) -> Unit,

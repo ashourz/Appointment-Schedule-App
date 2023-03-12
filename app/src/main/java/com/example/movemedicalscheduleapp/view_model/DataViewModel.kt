@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.*
 
 class DataViewModel(application: Application) : AndroidViewModel(application) {
     private val dataViewModelScope = viewModelScope.plus(CoroutineName("viewModelCoroutine") + SupervisorJob() + Dispatchers.IO)
-//    private val mainCoroutineScope = viewModelScope.plus(CoroutineName("mainThreadCoroutine") + SupervisorJob() + Dispatchers.Main)
 
     private val appointmentRepo: AppointmentRepo = AppointmentRepo(application)
 

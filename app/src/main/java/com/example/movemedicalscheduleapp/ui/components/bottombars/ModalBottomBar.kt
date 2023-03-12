@@ -40,7 +40,6 @@ fun ModalBottomBar(
     BackHandler{ onNegativeButtonClick() }
 
     BottomAppBar(
-//        modifier = Modifier.height(ComposableConstants.defaultNavigationBarHeight)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

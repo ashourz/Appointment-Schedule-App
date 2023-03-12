@@ -19,6 +19,9 @@ package com.example.movemedicalscheduleapp.data.database
 import kotlinx.coroutines.sync.Mutex
 
 interface DatabaseMutex {
+    /**
+     * Singleton mutex for database operation to prevent table locking
+     * */
     companion object {
         //Request DB Mutex
         private val databaseWriteMutex = Mutex()
