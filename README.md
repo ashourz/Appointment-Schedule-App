@@ -9,7 +9,7 @@ Create appointments with a date, time, location, and description.
 - Include ability to cancel (delete) an appointment
 - Ensurethe user interface to be simple yet elegant.
 
-# Key Features and Libraries
+# Key Libraries
 - Kotlin
 - Kotlin Coroutines
 - MVVM application structure
@@ -17,9 +17,24 @@ Create appointments with a date, time, location, and description.
 - Jetpack Compose with integrated MaterialDatePicker and MaterialTimePicker Views
 - Jetpack Navigation
 - Jetpack Room SQLite Database
-- Light/Dark color modes
+- MaterialDatePicker and MaterialTimePicker API
 
-# Testing
+# Key Features
+- LazyList View of appointments displays all appointments in chronological order grouped by date.
+- Date Sticky Headers allow for easy navigation of appointments in list
+- Upon opening the app the appointment list will automaticvally scroll to today's appointments
+- Today button allows for quick return scroll to today's appointments
+- Confirm Delete Appointment Popup prevents accidental appointment deletion by user.
+- Light/Dark Theme Support
+
+# Validation
+- Data validation on Add and Update appointment operations ensures that every appointment submitted contains a valid Title, Date, Time, Duration greater than 0 minutes, and Location. (Appointment description is optional)
+- Data validation on Update operations ensures redundant operations are not executed if no appointment values have been changed.
+- Appointment overlap validation on Add and Update appointment operations ensures that no two appointments scheduled to the same location overlap in datetime scheduled. 
+- Datetime scheduled is determined by date, time and duration values specified by the user.
+- Error messages on Add and Update appointment screens highlight datafield in error as well as Error Message for user clarity.
+
+# Unit and Integration Testing
 - JUnit4
 - Espresso
 - Google Truth
@@ -39,3 +54,5 @@ Create appointments with a date, time, location, and description.
   <img src="https://user-images.githubusercontent.com/39238415/224546801-f2d33e5d-dd71-4273-9599-774790e8ca0c.png" width="160" />
   <img src="https://user-images.githubusercontent.com/39238415/224545972-f8c16400-1f77-41ee-b0a9-43453f796935.png" width="160" />
 </p>
+
+**Appointment card data may not reflect actual validation standards enforced by the application
