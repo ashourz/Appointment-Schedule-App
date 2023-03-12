@@ -119,6 +119,16 @@ class ScheduleScaffoldKtTest: TestCase(){
 
     @Test
     fun onTodayClicked(){
+        runBlocking {
+            repeat(50
+            ) {
+                dataViewModel.upsertAppointment(
+                    appointment.copy(
+                        datetime = LocalDateTime.now().minusDays(1L)
+                    )
+                )
+            }
+        }
         //Assert Bottom Bar Button Displayed
         val todayLabel = activity.getString(R.string.today_text)
         val todayButton = composeTestRule.onNodeWithText(todayLabel)
