@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MoveMedical Schedule App</string>
+    <string name="app_name">My Schedule App</string>
     <!-- Composable Types -->
     <string name="appointment_card">AppointmentCard</string>
     <string name="compose_date_picker">ComposeDatePicker</string>
