@@ -23,7 +23,7 @@ Create appointments with a date, time, location, and description.
 # Key Features
 - LazyList View of appointments displays all appointments in chronological order grouped by date.
 - Date Sticky Headers allow for easy navigation of appointments in list
-- Upon opening the app the appointment list will automaticvally scroll to today's appointments
+- Upon opening the app the appointment list will automatically  scroll to today's appointments
 - Today button allows for quick return scroll to today's appointments
 - Confirm Delete Appointment Popup prevents accidental appointment deletion by user.
 - Light/Dark Theme Support
