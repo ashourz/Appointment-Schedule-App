@@ -11,7 +11,8 @@ Create appointments with a date, time, location, and description.
 
 # Key Libraries
 - Kotlin
-- Kotlin Coroutines
+  - Coroutines
+  - Flow
 - MVVM application structure
 - Material Design 3
 - Jetpack Compose with integrated MaterialDatePicker and MaterialTimePicker Views
