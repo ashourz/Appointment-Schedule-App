@@ -7,7 +7,7 @@ Create appointments with a date, time, location, and description.
 - Include a list of appointments
 - Include ability to edit appointments
 - Include ability to cancel (delete) an appointment
-- Ensurethe user interface to be simple yet elegant.
+- Ensure the user interface to be simple yet elegant.
 
 # Key Libraries
 - Kotlin
