@@ -19,6 +19,7 @@ package com.example.movemedicalscheduleapp.view_model
 import android.app.Application
 import android.content.Context
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -122,8 +123,8 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
     //endregion
 
     //region: Snackbar Message Flow and State
-    val snackbarHostStateFlow: StateFlow<SnackbarHostState> = MutableStateFlow(SnackbarHostState()).asStateFlow()
-    val snackbarMessages: SharedFlow<String?> = appointmentRepo.snackbarMessageFlow.asSharedFlow()
+    val snackbarMessages = appointmentRepo.snackbarMessageFlow.asSharedFlow()
+
     //endregion
 
     init {

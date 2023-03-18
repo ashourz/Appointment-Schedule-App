@@ -24,13 +24,14 @@ import com.example.movemedicalscheduleapp.data.database.TypeConverter
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.data.entity.ApptLocation
 import com.example.movemedicalscheduleapp.extensions.toSQLLong
+import com.example.movemedicalscheduleapp.ui.ui_data_class.SnackBarTimeStampMessage
 import com.google.common.truth.Truth
 import junit.framework.TestCase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -43,7 +44,7 @@ import java.time.LocalDateTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
-class AppointmentRepoTest: TestCase() {
+class AppointmentRepoTest : TestCase() {
     private lateinit var repo: AppointmentRepo
     private val typeConverter: TypeConverter = TypeConverter()
 
@@ -461,5 +462,28 @@ class AppointmentRepoTest: TestCase() {
         Truth.assertThat(resultList2.none {
             it == correctedAppt1
         }).isTrue()
+    }
+
+    @Test
+    fun emitSnackBarMessageFlow() = kotlinx.coroutines.test.runTest {
+        val testMessage = "TEST SNACKBAR"
+        val emitLocalDateTime = LocalDateTime.now()
+        val snackBarTimeStampMessage = SnackBarTimeStampMessage(message = testMessage, timestamp = emitLocalDateTime)
+
+        //Confirm Emission
+        Truth.assertThat(repo.snackbarMessageFlow.tryEmit(snackBarTimeStampMessage)).isTrue()
+    }
+
+    @Test
+    fun receiveSnackBarMessageFlow() = kotlinx.coroutines.test.runTest(UnconfinedTestDispatcher()) {
+        val testMessage = "TEST SNACKBAR"
+        val emitLocalDateTime = LocalDateTime.now()
+        val snackBarTimeStampMessage = SnackBarTimeStampMessage(message = testMessage, timestamp = emitLocalDateTime)
+        val resultMessage = async {
+            repo.snackbarMessageFlow.first()
+        }
+        repo.snackbarMessageFlow.emit(snackBarTimeStampMessage)
+        //Confirm Emission
+        Truth.assertThat(resultMessage.await() == snackBarTimeStampMessage).isTrue()
     }
 }

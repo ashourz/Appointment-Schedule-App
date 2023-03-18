@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -55,20 +56,6 @@ fun UpsertScaffold(
     val coroutineScopeIO = rememberCoroutineScope().plus(Dispatchers.IO)
     val tempAppointmentProperties by dataViewModel.temporaryAppointmentPropertiesFlow.collectAsState()
 
-    //region: Snackbar State, Messages and LaunchedEffect
-    val snackbarHostState by dataViewModel.snackbarHostStateFlow.collectAsState()
-    val snackbarMessages by dataViewModel.snackbarMessages.collectAsState(null)
-    LaunchedEffect(key1 = snackbarMessages) {
-        snackbarMessages?.let { snackBarMessage ->
-            //Show snackbar message on every non-null value
-            snackbarHostState.showSnackbar(
-                message = snackBarMessage,
-                duration = SnackbarDuration.Short
-            )
-        }
-    }
-    //endregion
-
     //region: Error States
     var appointmentTitleError: String? by remember { mutableStateOf(null) }
     var appointmentLocationError: String? by remember { mutableStateOf(null) }
@@ -91,7 +78,6 @@ fun UpsertScaffold(
     }
 
     ModalScaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         title = if (update) {
             stringResource(R.string.update_appointment)
         } else {

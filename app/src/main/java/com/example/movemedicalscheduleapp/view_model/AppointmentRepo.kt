@@ -24,6 +24,8 @@ import com.example.movemedicalscheduleapp.data.database.DatabaseMutex
 import com.example.movemedicalscheduleapp.data.database.ScheduleDatabase
 import com.example.movemedicalscheduleapp.data.entity.Appointment
 import com.example.movemedicalscheduleapp.extensions.toSQLLong
+import com.example.movemedicalscheduleapp.ui.ui_data_class.SnackBarTimeStampMessage
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +37,7 @@ class AppointmentRepo(context: Context) : DatabaseMutex {
     var pastAppointmentFlow: Flow<List<Appointment>>
     var todayAppointmentFlow: Flow<List<Appointment>>
     var futureAppointmentFlow: Flow<List<Appointment>>
-    var snackbarMessageFlow: MutableSharedFlow<String?> = MutableSharedFlow()
+    var snackbarMessageFlow = MutableSharedFlow<SnackBarTimeStampMessage>(extraBufferCapacity = 10, onBufferOverflow = BufferOverflow.SUSPEND)
 
 
     init {
@@ -55,17 +57,17 @@ class AppointmentRepo(context: Context) : DatabaseMutex {
             databaseWriteMutex().withLock {
                 val upsertValue =  appointmentDao.upsertAppointment(appointment)
                 if(upsertValue >= 0L){
-                    snackbarMessageFlow.emit("Appointment Added")
+                    snackbarMessageFlow.emit(SnackBarTimeStampMessage("Appointment Added"))
                 }else if(upsertValue == -1L){
-                    snackbarMessageFlow.emit("Appointment Updated")
+                    snackbarMessageFlow.emit(SnackBarTimeStampMessage("Appointment Updated"))
                 }
                 return upsertValue
             }
         } catch (e: SQLiteConstraintException) {
-            snackbarMessageFlow.emit("Database Operation Failed")
+            snackbarMessageFlow.emit(SnackBarTimeStampMessage("Database Operation Failed"))
             return -1L
         } catch (e: Exception) {
-            snackbarMessageFlow.emit("An Unknown Error Has Occurred")
+            snackbarMessageFlow.emit(SnackBarTimeStampMessage("An Unknown Error Has Occurred"))
             return -1L
         }
     }
@@ -78,17 +80,17 @@ class AppointmentRepo(context: Context) : DatabaseMutex {
             databaseWriteMutex().withLock {
                 val deleteCount = appointmentDao.deleteAppointment(appointment)
                 if(deleteCount < 1){
-                    snackbarMessageFlow.emit("Appointment Deletion Failed")
+                    snackbarMessageFlow.emit(SnackBarTimeStampMessage("Appointment Deletion Failed"))
                 }else{
-                    snackbarMessageFlow.emit("Appointment Deleted")
+                    snackbarMessageFlow.emit(SnackBarTimeStampMessage("Appointment Deleted"))
                 }
                 return deleteCount
             }
         } catch (e: SQLiteConstraintException) {
-            snackbarMessageFlow.emit("Database Operation Failed During Deletion")
+            snackbarMessageFlow.emit(SnackBarTimeStampMessage("Database Operation Failed During Deletion"))
             return -1
         } catch (e: Exception) {
-            snackbarMessageFlow.emit("An Unknown Error Has Occurred During Deletion")
+            snackbarMessageFlow.emit(SnackBarTimeStampMessage("An Unknown Error Has Occurred During Deletion"))
             return -1
         }
     }
@@ -107,10 +109,10 @@ class AppointmentRepo(context: Context) : DatabaseMutex {
                 )
             }
         } catch (e: SQLiteConstraintException) {
-            snackbarMessageFlow.emit("Database Operation Failed During Validation")
+            snackbarMessageFlow.emit(SnackBarTimeStampMessage("Database Operation Failed During Validation"))
             return emptyList()
         } catch (e: Exception) {
-            snackbarMessageFlow.emit("An Unknown Error Has Occurred During Validation")
+            snackbarMessageFlow.emit(SnackBarTimeStampMessage("An Unknown Error Has Occurred During Validation"))
             return emptyList()
         }
     }
@@ -124,9 +126,9 @@ class AppointmentRepo(context: Context) : DatabaseMutex {
                 return appointmentDao.deleteAll()
             }
         } catch (e: SQLiteConstraintException) {
-            snackbarMessageFlow.emit("Database Operation Failed During Deletion")
+            snackbarMessageFlow.emit(SnackBarTimeStampMessage("Database Operation Failed During Deletion"))
         } catch (e: Exception) {
-            snackbarMessageFlow.emit("An Unknown Error Has Occurred During Deletion")
+            snackbarMessageFlow.emit(SnackBarTimeStampMessage("An Unknown Error Has Occurred During Deletion"))
         }
     }
 

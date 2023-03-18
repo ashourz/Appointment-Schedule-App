@@ -16,13 +16,17 @@
 
 package com.example.movemedicalscheduleapp.ui.screens
 
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.movemedicalscheduleapp.view_model.DataViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainActivityNavHost(
     fragmentManager: FragmentManager,
@@ -30,49 +34,68 @@ fun MainActivityNavHost(
 ) {
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = NavDestinationEnum.SCHEDULE.destination
-    ){
-
-        composable(NavDestinationEnum.SCHEDULE.destination) {
-            ScheduleScaffold(
-                dataViewModel = dataViewModel,
-                onNavigateToAddAppointment = {
-                    navController.navigate(NavDestinationEnum.ADD_APPOINTMENT.destination) {
-                        launchSingleTop = true
-                    }
-                },
-                onNavigateToUpdateAppointment = {
-                    navController.navigate(NavDestinationEnum.EDIT_APPOINTMENT.destination) {
-                        launchSingleTop = true
-                    }
-                }
+    val snackbarHostState = remember{SnackbarHostState()}
+    val snackbarMessages by dataViewModel.snackbarMessages.collectAsState(initial = null)
+    /**
+     * Hoisted Snack Bar State to Main Activity Scaffold for singular subscription in always active activity.
+     * */
+    LaunchedEffect(key1 = snackbarMessages) {
+        snackbarMessages?.let { snackBarMessage ->
+            //Show snackbar message on every non-null value
+            snackbarHostState.showSnackbar(
+                message = snackBarMessage.message,
+                duration = SnackbarDuration.Short
             )
         }
-
-        composable(NavDestinationEnum.ADD_APPOINTMENT.destination) {
-            UpsertScaffold(
-                fragmentManager = fragmentManager ,
-                dataViewModel = dataViewModel,
-                update = false,
-                onNavigateAway = {
-                    navController.navigateUp()
-                }
-            )
-        }
-
-        composable(
-            NavDestinationEnum.EDIT_APPOINTMENT.destination
+    }
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) {
+        NavHost(
+            modifier = Modifier.padding(it),
+            navController = navController,
+            startDestination = NavDestinationEnum.SCHEDULE.destination
         ) {
-            UpsertScaffold(
-                fragmentManager = fragmentManager ,
-                dataViewModel = dataViewModel,
-                update = true,
-                onNavigateAway = {
-                    navController.navigateUp()
-                }
-            )
+
+            composable(NavDestinationEnum.SCHEDULE.destination) {
+                ScheduleScaffold(
+                    dataViewModel = dataViewModel,
+                    onNavigateToAddAppointment = {
+                        navController.navigate(NavDestinationEnum.ADD_APPOINTMENT.destination) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToUpdateAppointment = {
+                        navController.navigate(NavDestinationEnum.EDIT_APPOINTMENT.destination) {
+                            launchSingleTop = true
+                        }
+                    }
+                )
+            }
+
+            composable(NavDestinationEnum.ADD_APPOINTMENT.destination) {
+                UpsertScaffold(
+                    fragmentManager = fragmentManager,
+                    dataViewModel = dataViewModel,
+                    update = false,
+                    onNavigateAway = {
+                        navController.navigateUp()
+                    }
+                )
+            }
+
+            composable(
+                NavDestinationEnum.EDIT_APPOINTMENT.destination
+            ) {
+                UpsertScaffold(
+                    fragmentManager = fragmentManager,
+                    dataViewModel = dataViewModel,
+                    update = true,
+                    onNavigateAway = {
+                        navController.navigateUp()
+                    }
+                )
+            }
         }
     }
 }

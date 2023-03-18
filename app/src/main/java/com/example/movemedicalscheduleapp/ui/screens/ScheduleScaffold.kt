@@ -71,20 +71,6 @@ fun ScheduleScaffold(
     val expandedAppointmentCardId by dataViewModel.expandedAppointmentCardIdStateFlow.collectAsState()
     //endregion
 
-    //region: Snackbar State, Messages and LaunchedEffect
-    val snackbarHostState by dataViewModel.snackbarHostStateFlow.collectAsState()
-    val snackbarMessages by dataViewModel.snackbarMessages.collectAsState(initial = null)
-    LaunchedEffect(key1 = snackbarMessages) {
-        snackbarMessages?.let { snackBarMessage ->
-            //Show snackbar message on every non-null value
-            snackbarHostState.showSnackbar(
-                message = snackBarMessage,
-                duration = SnackbarDuration.Short
-            )
-        }
-    }
-    //endregion 
-
     /**
      * onExpandAppointmentCard is executed when any Appointment Card is clicked
      * Updates expandedAppointmentCardIdStateFlow to extend or close an AppointmentCard, only having one AppointmentCard open at any time.
@@ -127,7 +113,7 @@ fun ScheduleScaffold(
 
     Box() {
         Scaffold(
-            snackbarHost = { SnackbarHost(snackbarHostState) },
+//            snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = { BasicTopBar(stringResource(R.string.my_appointment_schedule)) },
             bottomBar = {
                 ScheduleBottomBar(
