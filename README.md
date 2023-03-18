@@ -42,6 +42,8 @@ Create appointments with a date, time, location, and description.
 
 # Known Issues 
 - Snackbar messages either disappear too quickly or do not appear on database actions being taken (add, delete, update). This has been corrected in branch  **snackbar_message_update_03_18_23**
+  - **Issue**: Snackbar disappearing very quickly due to coroutine being cancelled if snackbar was shown in UpsertScaffold.kt then application was navigated to ScheduleScaffold.kt. snackbarMessages or the same message as previous would not show as this would not change the state of the state flow in the composables. 
+  - **Update**: Update to the message type in the sharedflow to SnackBarTimeStampMessage.kt which includes both a message and a timestamp, making each emission on the flow unique, ensuring emissions of the same message are shown. Also, hoisting the subscription and LaunchedEffect to show the snackbar to MainActivityNavHost.kt, which is now wrapped in a Scaffold so that this scaffold holding the snackbar state is always present during the ui lifecycle.   
 
 # Screenshots
 <p float="left">
