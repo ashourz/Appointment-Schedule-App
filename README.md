@@ -40,6 +40,9 @@ Create appointments with a date, time, location, and description.
 - Espresso
 - Google Truth
 
+# Known Issues 
+- Snackbar messages either disappear too quickly or do not appear on database actions being taken (add, delete, update). This has been corrected in branch  **snackbar_message_update_03_18_23**
+
 # Screenshots
 <p float="left">
   <img src="https://user-images.githubusercontent.com/39238415/224545291-72c122fc-8037-4eec-a6cb-44b504a37e1b.png" width="160" /> 
